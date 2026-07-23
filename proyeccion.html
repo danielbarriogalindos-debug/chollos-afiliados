@@ -1,0 +1,260 @@
+<!doctype html>
+<title>Proyección ChollosTech — 6 meses</title>
+<style>
+  :root {
+    --bg: #eef1ec;
+    --surface: #ffffff;
+    --surface-2: #e4e8e1;
+    --text: #1b2420;
+    --text-muted: #5b6660;
+    --line: #d8ddd4;
+    --accent: #b9790f;
+    --accent-ink: #3d2604;
+    --pess: #a4503c;
+    --real: #b9790f;
+    --opt: #3f7d54;
+    --radius: 10px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121815;
+      --surface: #1b2320;
+      --surface-2: #212b26;
+      --text: #eef1ec;
+      --text-muted: #9aa39c;
+      --line: #2c3733;
+      --accent: #d99a2b;
+      --accent-ink: #1b1200;
+      --pess: #d97a63;
+      --real: #d99a2b;
+      --opt: #6fbf8b;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #121815; --surface: #1b2320; --surface-2: #212b26;
+    --text: #eef1ec; --text-muted: #9aa39c; --line: #2c3733;
+    --accent: #d99a2b; --accent-ink: #1b1200;
+    --pess: #d97a63; --real: #d99a2b; --opt: #6fbf8b;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #eef1ec; --surface: #ffffff; --surface-2: #e4e8e1;
+    --text: #1b2420; --text-muted: #5b6660; --line: #d8ddd4;
+    --accent: #b9790f; --accent-ink: #3d2604;
+    --pess: #a4503c; --real: #b9790f; --opt: #3f7d54;
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  .sheet { max-width: 780px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.75rem; }
+
+  .display {
+    font-family: "Arial Narrow", "Helvetica Neue Condensed", "Segoe UI Semibold", sans-serif;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+
+  .eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  header h1 { font-size: clamp(1.7rem, 4vw, 2.4rem); margin: 0.35rem 0 0.5rem; }
+  header p.thesis { margin: 0; color: var(--text-muted); font-size: 1.02rem; max-width: 60ch; }
+
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    font-size: 0.78rem; font-weight: 600; color: var(--text-muted);
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 999px; padding: 0.3rem 0.7rem; margin-top: 0.85rem;
+  }
+  .chip::before { content: "●"; color: var(--accent); font-size: 0.6rem; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.5rem;
+  }
+  .card h2 {
+    font-family: inherit; font-weight: 700; font-size: 0.95rem;
+    text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted);
+    margin: 0 0 1rem;
+  }
+
+  .legend { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-bottom: 0.9rem; }
+  .legend span { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.85rem; color: var(--text-muted); }
+  .dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; display: inline-block; }
+
+  .chart-wrap { overflow-x: auto; }
+  svg { display: block; width: 100%; height: auto; min-width: 480px; }
+  .gridline { stroke: var(--line); stroke-width: 1; }
+  .axis-label { fill: var(--text-muted); font-size: 10px; font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+  .series-line { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+  .area-fill { opacity: 0.12; }
+  .endpoint { stroke: var(--surface); stroke-width: 2; }
+  .endpoint-label { font-size: 11px; font-weight: 700; font-family: ui-monospace, "SF Mono", Consolas, monospace; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; min-width: 640px; }
+  thead th {
+    text-align: right; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em;
+    color: var(--text-muted); font-weight: 700; padding: 0 0.5rem 0.6rem; border-bottom: 1px solid var(--line);
+  }
+  thead th:first-child, tbody td:first-child { text-align: left; }
+  tbody td { padding: 0.55rem 0.5rem; text-align: right; font-variant-numeric: tabular-nums; border-bottom: 1px solid var(--line); }
+  tbody tr:last-child td { border-bottom: none; }
+  .col-pess { color: var(--pess); }
+  .col-real { color: var(--real); font-weight: 700; }
+  .col-opt { color: var(--opt); }
+  .muted-cell { color: var(--text-muted); }
+
+  .assumptions { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 0.9rem 1.6rem; margin: 0; padding: 0; list-style: none; }
+  .assumptions li { font-size: 0.92rem; color: var(--text); padding-left: 1rem; position: relative; }
+  .assumptions li::before { content: "—"; position: absolute; left: 0; color: var(--text-muted); }
+
+  ol.impact { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 0.9rem; }
+  ol.impact li { display: flex; gap: 0.9rem; align-items: baseline; }
+  ol.impact .rank {
+    font-family: ui-monospace, "SF Mono", Consolas, monospace; font-weight: 700; color: var(--accent);
+    font-size: 0.85rem; flex-shrink: 0; width: 1.4rem;
+  }
+  ol.impact .impact-text { font-size: 0.94rem; }
+  ol.impact .impact-text b { color: var(--text); }
+
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 600px) { .split { grid-template-columns: 1fr; } }
+  .split .box h3 { margin: 0 0 0.4rem; font-size: 0.9rem; }
+  .split .box p { margin: 0; font-size: 0.87rem; color: var(--text-muted); }
+  .box.can h3 { color: var(--opt); }
+  .box.cant h3 { color: var(--pess); }
+
+  footer { text-align: center; font-size: 0.78rem; color: var(--text-muted); }
+</style>
+
+<div class="sheet">
+
+  <header>
+    <div class="eyebrow">Proyección financiera · ChollosTech</div>
+    <h1 class="display">De cero a (quizás) 200€/mes: seis meses vistos por delante</h1>
+    <p class="thesis">Estimación de ingresos del sitio de ofertas con afiliados, mes a mes, en tres escenarios. Construida a partir de curvas de tráfico típicas de SEO para un dominio nuevo — no es una promesa.</p>
+    <div class="chip">Ningún ingreso está garantizado</div>
+  </header>
+
+  <div class="card">
+    <h2>Ingresos estimados por mes</h2>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--pess)"></i>Pesimista</span>
+      <span><i class="dot" style="background:var(--real)"></i>Realista</span>
+      <span><i class="dot" style="background:var(--opt)"></i>Optimista</span>
+    </div>
+    <div class="chart-wrap">
+      <svg viewBox="0 0 660 260" role="img" aria-label="Gráfico de ingresos estimados por mes en tres escenarios">
+        <line class="gridline" x1="40" y1="228" x2="632" y2="228"></line>
+        <line class="gridline" x1="40" y1="158.7" x2="632" y2="158.7"></line>
+        <line class="gridline" x1="40" y1="89.3" x2="632" y2="89.3"></line>
+        <line class="gridline" x1="40" y1="20" x2="632" y2="20"></line>
+        <text class="axis-label" x="8" y="231">0€</text>
+        <text class="axis-label" x="0" y="161.7">100€</text>
+        <text class="axis-label" x="0" y="92.3">200€</text>
+        <text class="axis-label" x="0" y="23">300€</text>
+
+        <text class="axis-label" x="36" y="248">M1</text>
+        <text class="axis-label" x="149" y="248">M2</text>
+        <text class="axis-label" x="264" y="248">M3</text>
+        <text class="axis-label" x="380" y="248">M4</text>
+        <text class="axis-label" x="495" y="248">M5</text>
+        <text class="axis-label" x="608" y="248">M6</text>
+
+        <path class="area-fill" fill="var(--real)" d="M40,228 L155.2,221.1 L270.4,210.7 L385.6,191.6 L500.8,169.1 L616,144.8 L616,228 L40,228 Z"></path>
+
+        <path class="series-line" stroke="var(--pess)" d="M40,228 L155.2,228 L270.4,228 L385.6,224.5 L500.8,222.8 L616,217.6"></path>
+        <path class="series-line" stroke="var(--real)" d="M40,228 L155.2,221.1 L270.4,210.7 L385.6,191.6 L500.8,169.1 L616,144.8"></path>
+        <path class="series-line" stroke="var(--opt)" d="M40,226.3 L155.2,208.9 L270.4,182.9 L385.6,148.3 L500.8,106.7 L616,54.7"></path>
+
+        <circle class="endpoint" cx="616" cy="217.6" r="4" fill="var(--pess)"></circle>
+        <circle class="endpoint" cx="616" cy="144.8" r="4" fill="var(--real)"></circle>
+        <circle class="endpoint" cx="616" cy="54.7" r="4" fill="var(--opt)"></circle>
+        <text class="endpoint-label" x="560" y="209" fill="var(--pess)">~15€</text>
+        <text class="endpoint-label" x="560" y="138" fill="var(--real)">~120€</text>
+        <text class="endpoint-label" x="560" y="48" fill="var(--opt)">~250€</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Tabla mes a mes</h2>
+    <div class="chart-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Mes</th>
+            <th>Artículos</th>
+            <th>Visitas — pes.</th>
+            <th>Visitas — real.</th>
+            <th>Visitas — opt.</th>
+            <th>Ingresos — pes.</th>
+            <th>Ingresos — real.</th>
+            <th>Ingresos — opt.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td class="muted-cell">10–20</td><td>0</td><td>0–50</td><td>100</td><td class="col-pess">0€</td><td class="col-real">0€</td><td class="col-opt">0–5€</td></tr>
+          <tr><td>2</td><td class="muted-cell">25–40</td><td>0</td><td>100–400</td><td>800</td><td class="col-pess">0€</td><td class="col-real">5–15€</td><td class="col-opt">15–40€</td></tr>
+          <tr><td>3</td><td class="muted-cell">40–60</td><td>0–50</td><td>300–900</td><td>2.000</td><td class="col-pess">0€</td><td class="col-real">10–40€</td><td class="col-opt">40–90€</td></tr>
+          <tr><td>4</td><td class="muted-cell">60–90</td><td>50–150</td><td>600–1.800</td><td>3.500</td><td class="col-pess">0–10€</td><td class="col-real">25–80€</td><td class="col-opt">80–150€</td></tr>
+          <tr><td>5</td><td class="muted-cell">90–120</td><td>100–300</td><td>1.000–3.000</td><td>5.000</td><td class="col-pess">0–15€</td><td class="col-real">40–130€</td><td class="col-opt">130–220€</td></tr>
+          <tr><td>6</td><td class="muted-cell">120–150</td><td>150–500</td><td>1.500–4.000</td><td>7.000</td><td class="col-pess">5–25€</td><td class="col-real">60–180€</td><td class="col-opt">180–320€</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Supuestos de partida</h2>
+    <ul class="assumptions">
+      <li>Dominio nuevo, sin autoridad previa en Google.</li>
+      <li>Contenido generado por plantillas, no por un redactor SEO profesional.</li>
+      <li>0€ de presupuesto en publicidad de pago.</li>
+      <li>Sin audiencia previa (redes, newsletter) para arrancar el tráfico.</li>
+      <li>Alguien tiene que seguir añadiendo productos reales al catálogo — la automatización publica, no descubre ofertas.</li>
+      <li>Comisión media estimada de Amazon: 3–6€ por venta.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Qué mueve la aguja, por orden de impacto</h2>
+    <ol class="impact">
+      <li><span class="rank">01</span><span class="impact-text"><b>Constancia añadiendo contenido nuevo</b> — pesa más que cualquier ajuste técnico.</span></li>
+      <li><span class="rank">02</span><span class="impact-text"><b>Elegir un nicho concreto</b> en vez de ser generalista — Google premia la especialización en sitios nuevos.</span></li>
+      <li><span class="rank">03</span><span class="impact-text"><b>Tener la cuenta de afiliados aprobada</b> con el Tracking ID correcto desde el minuto uno.</span></li>
+      <li><span class="rank">04</span><span class="impact-text"><b>Promoción externa mínima</b> (foros, grupos de ofertas relevantes) puede adelantar semanas el arranque del tráfico orgánico.</span></li>
+    </ol>
+  </div>
+
+  <div class="split">
+    <div class="card box can">
+      <h3>Lo que sigo pudiendo hacer yo</h3>
+      <p>Escribir artículos, ampliar el pipeline, mejorar el SEO técnico, añadir productos si me pasas ofertas reales.</p>
+    </div>
+    <div class="card box cant">
+      <h3>Lo que depende solo de ti</h3>
+      <p>Crear la cuenta de Amazon Afiliados, pagar el dominio, y el tiempo real que tarda el tráfico en crecer.</p>
+    </div>
+  </div>
+
+  <footer>Estimación orientativa a fecha de julio de 2026 — revisar y ajustar con datos reales del sitio en cuanto haya tráfico.</footer>
+
+</div>
