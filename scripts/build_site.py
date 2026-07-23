@@ -8,7 +8,8 @@ import shutil
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "docs")
 SITE_NAME = "ChollosTech"
-SITE_URL = "https://TU-DOMINIO-AQUI.com"  # cambia esto cuando tengas dominio
+# Cambia esto si compras un dominio propio y lo apuntas a GitHub Pages.
+SITE_URL = "https://danielbarriogalindos-debug.github.io/chollos-afiliados"
 
 BASE_CSS = """
 * { box-sizing: border-box; }
@@ -44,16 +45,24 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 """
 
-COOKIE_BANNER_HTML = """
+def cookie_banner_html(root):
+    return f"""
 <div id="cookie-banner">
   Usamos cookies propias y de terceros (enlaces de afiliado) para el funcionamiento de la web.
-  Mas info en nuestra <a href="/legal/cookies.html" style="color:#ff9900">politica de cookies</a>.
+  Mas info en nuestra <a href="{root}legal/cookies.html" style="color:#ff9900">politica de cookies</a>.
   <button id="cookie-accept">Vale</button>
 </div>
 """
 
 
-def page_shell(title, body, description=""):
+def page_shell(title, body, description="", root=""):
+    """
+    root = prefijo relativo hacia la carpeta docs/. "" si la pagina esta en la
+    raiz (index.html), "../" si esta un nivel mas abajo (articulos/, legal/).
+    Usar rutas relativas en vez de absolutas es necesario porque GitHub Pages
+    sirve este sitio bajo una subcarpeta (/chollos-afiliados/), no en la raiz
+    del dominio.
+    """
     return f"""<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -61,20 +70,20 @@ def page_shell(title, body, description=""):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} | {SITE_NAME}</title>
 <meta name="description" content="{description}">
-<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="{root}static/style.css">
 </head>
 <body>
-<header><a href="/">{SITE_NAME}</a></header>
+<header><a href="{root}index.html">{SITE_NAME}</a></header>
 <main>
 {body}
 </main>
 <footer>
-  &copy; {SITE_NAME}. <a href="/legal/aviso-legal.html">Aviso legal</a> ·
-  <a href="/legal/privacidad.html">Privacidad</a> ·
-  <a href="/legal/cookies.html">Cookies</a>
+  &copy; {SITE_NAME}. <a href="{root}legal/aviso-legal.html">Aviso legal</a> ·
+  <a href="{root}legal/privacidad.html">Privacidad</a> ·
+  <a href="{root}legal/cookies.html">Cookies</a>
 </footer>
-{COOKIE_BANNER_HTML}
-<script src="/static/cookie-consent.js"></script>
+{cookie_banner_html(root)}
+<script src="{root}static/cookie-consent.js"></script>
 </body>
 </html>"""
 
@@ -83,7 +92,7 @@ def build_index(articles):
     cards = ""
     for a in articles:
         cards += f"""
-        <a class="card" href="/articulos/{a['slug']}.html" style="text-decoration:none;color:inherit;">
+        <a class="card" href="articulos/{a['slug']}.html" style="text-decoration:none;color:inherit;">
           <img src="{a['image_url']}" alt="{a['title']}" loading="lazy">
           <h3>{a['title']}</h3>
           <div class="price-box">
@@ -93,12 +102,12 @@ def build_index(articles):
           </div>
         </a>"""
     body = f"<h1>Ultimas ofertas</h1><div class='card-grid'>{cards}</div>"
-    return page_shell("Inicio", body, "Las mejores ofertas y chollos de tecnologia seleccionados cada dia.")
+    return page_shell("Inicio", body, "Las mejores ofertas y chollos de tecnologia seleccionados cada dia.", root="")
 
 
 def build_article(a):
     body = f"<h1>{a['title']}</h1><p><em>Publicado el {a['published']}</em></p>{a['body_html']}"
-    return page_shell(a["title"], body, a["meta_description"])
+    return page_shell(a["title"], body, a["meta_description"], root="../")
 
 
 LEGAL_PAGES = {
@@ -152,7 +161,7 @@ def build(articles):
 
     for name, content in LEGAL_PAGES.items():
         with open(os.path.join(OUT_DIR, "legal", name), "w", encoding="utf-8") as f:
-            f.write(page_shell(name.replace(".html", "").replace("-", " ").title(), content))
+            f.write(page_shell(name.replace(".html", "").replace("-", " ").title(), content, root="../"))
 
     urls = [SITE_URL + "/"] + [f"{SITE_URL}/articulos/{a['slug']}.html" for a in articles]
     sitemap = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>"
