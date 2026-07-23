@@ -1,0 +1,33 @@
+name: Generar y publicar sitio
+
+on:
+  schedule:
+    # Todos los dias a las 06:00 UTC. Cambia esto si quieres otra frecuencia.
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ejecutar pipeline de contenido
+        run: python scripts/run_pipeline.py
+
+      - name: Publicar cambios generados
+        run: |
+          git config user.name "chollos-bot"
+          git config user.email "chollos-bot@users.noreply.github.com"
+          git add docs
+          git diff --cached --quiet || git commit -m "Actualizacion automatica del sitio"
+          git push

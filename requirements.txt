@@ -1,0 +1,3 @@
+# El pipeline base no necesita ninguna dependencia externa (solo libreria estandar de Python).
+# Descomenta la siguiente linea SOLO si activas el enriquecido de texto con Claude (opcional, de pago):
+# anthropic
