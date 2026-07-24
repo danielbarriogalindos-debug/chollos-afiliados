@@ -103,6 +103,18 @@ main { max-width: 1180px; margin: 0 auto; padding: 1.6rem 1rem 3rem; }
 
 .related-grid { margin-top: 2rem; }
 
+/* Filtro y orden */
+.filter-bar { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1.2rem; }
+.filter-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.filter-label { font-size: 0.82rem; color: var(--ink-muted); font-weight: 600; }
+.filter-btn { border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 0.82rem; padding: 0.32rem 0.75rem; border-radius: 999px; cursor: pointer; }
+.filter-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+.filter-select { border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 0.82rem; padding: 0.32rem 0.6rem; border-radius: 8px; }
+.filter-count { margin-left: auto; font-size: 0.8rem; color: var(--ink-muted); }
+.load-more-wrap { text-align: center; margin-top: 1.6rem; }
+#load-more { border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-weight: 700; padding: 0.7rem 1.6rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; }
+#load-more:hover { border-color: var(--accent); }
+
 footer { text-align: center; padding: 2rem 1rem; font-size: .85rem; color: var(--ink-muted); }
 footer a { color: var(--ink-muted); }
 
@@ -162,6 +174,58 @@ SEARCH_JS = """
 })();
 """
 
+FILTER_JS = """
+(function () {
+  var bar = document.querySelector('.filter-bar');
+  if (!bar) return;
+  var grid = document.querySelector('.card-grid');
+  var buttons = Array.prototype.slice.call(bar.querySelectorAll('[data-min]'));
+  var sortSelect = bar.querySelector('#sort-select');
+  var loadMoreBtn = document.getElementById('load-more');
+  var countEl = document.getElementById('result-count');
+  var pageSize = 24;
+  var shown = pageSize;
+
+  function apply() {
+    var activeBtn = bar.querySelector('[data-min].active') || buttons[0];
+    var min = parseInt(activeBtn.dataset.min, 10);
+    var cards = Array.prototype.slice.call(grid.querySelectorAll('.card'));
+    var visible = cards.filter(function (c) { return parseInt(c.dataset.discount, 10) >= min; });
+
+    if (sortSelect) {
+      var by = sortSelect.value;
+      visible.sort(function (a, b) {
+        if (by === 'discount') return parseInt(b.dataset.discount, 10) - parseInt(a.dataset.discount, 10);
+        if (by === 'price-asc') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+        if (by === 'price-desc') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+        return 0;
+      });
+    }
+
+    cards.forEach(function (c) { c.style.display = 'none'; });
+    visible.forEach(function (c, i) {
+      grid.appendChild(c);
+      c.style.display = i < shown ? '' : 'none';
+    });
+    if (loadMoreBtn) loadMoreBtn.style.display = visible.length > shown ? '' : 'none';
+    if (countEl) countEl.textContent = visible.length;
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener('click', function () {
+      buttons.forEach(function (x) { x.classList.remove('active'); });
+      b.classList.add('active');
+      shown = pageSize;
+      apply();
+    });
+  });
+  if (sortSelect) sortSelect.addEventListener('change', function () { shown = pageSize; apply(); });
+  if (loadMoreBtn) loadMoreBtn.addEventListener('click', function () { shown += pageSize; apply(); });
+
+  apply();
+})();
+"""
+
 COOKIE_JS = """
 document.addEventListener('DOMContentLoaded', function () {
   if (!localStorage.getItem('cookie_ok')) {
@@ -189,6 +253,7 @@ def cookie_banner_html(root):
 
 def category_nav_html(root, active=None):
     pills = [f'<a class="cat-pill{" active" if active is None else ""}" href="{root}index.html">Inicio</a>']
+    pills.append(f'<a class="cat-pill{" active" if active == "ofertas" else ""}" href="{root}ofertas.html">🔥 Todas las ofertas</a>')
     for slug in CATEGORY_ORDER:
         label = CATEGORY_LABELS[slug]
         cls = "cat-pill active" if slug == active else "cat-pill"
@@ -241,13 +306,14 @@ def page_shell(title, body, description="", root="", active_category=None):
 {cookie_banner_html(root)}
 <script src="{root}static/cookie-consent.js"></script>
 <script src="{root}static/search.js"></script>
+<script src="{root}static/filter.js"></script>
 </body>
 </html>"""
 
 
 def product_card(a, root):
     return f"""
-    <a class="card" href="{root}articulos/{a['slug']}.html">
+    <a class="card" href="{root}articulos/{a['slug']}.html" data-discount="{a['discount_pct']}" data-price="{a['price']:.2f}">
       <img src="{a['image_url']}" alt="{a['name']}" loading="lazy">
       <div class="cat-tag">{a['category_label']}</div>
       <h3>{a['name']}</h3>
@@ -258,6 +324,34 @@ def product_card(a, root):
         <span class="discount">-{a['discount_pct']}%</span>
       </div>
     </a>"""
+
+
+def filter_bar_html():
+    return """
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Descuento minimo:</span>
+        <button class="filter-btn active" data-min="0">Todos</button>
+        <button class="filter-btn" data-min="10">10%+</button>
+        <button class="filter-btn" data-min="25">25%+</button>
+        <button class="filter-btn" data-min="40">40%+</button>
+        <button class="filter-btn" data-min="60">60%+</button>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="sort-select">Ordenar:</label>
+        <select id="sort-select" class="filter-select">
+          <option value="discount">Mayor descuento</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+      </div>
+      <span class="filter-count"><span id="result-count"></span> productos</span>
+    </div>
+    """
+
+
+def load_more_html():
+    return '<div class="load-more-wrap"><button id="load-more">Cargar mas</button></div>'
 
 
 def section_html(title, items, root, see_all_href=None):
@@ -298,9 +392,25 @@ def build_category_page(slug, items):
     body = f"""
     {breadcrumb}
     <h1>{label}: todas las ofertas</h1>
+    {filter_bar_html()}
     <div class="card-grid">{cards}</div>
+    {load_more_html()}
     """
     return page_shell(label, body, f"Todas las ofertas de {label} seleccionadas cada dia.", root="../", active_category=slug)
+
+
+def build_all_offers_page(articles):
+    breadcrumb = '<div class="breadcrumb"><a href="index.html">Inicio</a> / Todas las ofertas</div>'
+    cards = "".join(product_card(a, root="") for a in articles)
+    body = f"""
+    {breadcrumb}
+    <h1>Todas las ofertas</h1>
+    <p style="color:var(--ink-muted);">{len(articles)} productos con descuento en todas las categorias. Filtra por descuento minimo o cambia el orden.</p>
+    {filter_bar_html()}
+    <div class="card-grid">{cards}</div>
+    {load_more_html()}
+    """
+    return page_shell("Todas las ofertas", body, "Todas las ofertas de Amazon en un solo listado, filtrable por descuento.", root="", active_category="ofertas")
 
 
 def build_article(a, all_articles):
@@ -369,9 +479,14 @@ def build(articles):
         f.write(COOKIE_JS)
     with open(os.path.join(OUT_DIR, "static", "search.js"), "w", encoding="utf-8") as f:
         f.write(SEARCH_JS)
+    with open(os.path.join(OUT_DIR, "static", "filter.js"), "w", encoding="utf-8") as f:
+        f.write(FILTER_JS)
 
     with open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(build_index(articles))
+
+    with open(os.path.join(OUT_DIR, "ofertas.html"), "w", encoding="utf-8") as f:
+        f.write(build_all_offers_page(articles))
 
     for slug in CATEGORY_ORDER:
         items = [a for a in articles if a["category"] == slug]
@@ -400,7 +515,7 @@ def build(articles):
     with open(os.path.join(OUT_DIR, "products.json"), "w", encoding="utf-8") as f:
         json.dump(products_index, f, ensure_ascii=False)
 
-    urls = [SITE_URL + "/"] + [f"{SITE_URL}/articulos/{a['slug']}.html" for a in articles]
+    urls = [SITE_URL + "/", f"{SITE_URL}/ofertas.html"] + [f"{SITE_URL}/articulos/{a['slug']}.html" for a in articles]
     urls += [f"{SITE_URL}/categorias/{slug}.html" for slug in CATEGORY_ORDER]
     sitemap = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>"
     sitemap += "".join(f"<url><loc>{u}</loc></url>" for u in urls)

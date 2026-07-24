@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inicio | ChollosTech</title>
-<meta name="description" content="Las mejores ofertas de Amazon en tecnologia, hogar, deporte, moda, bebe y mascotas, seleccionadas cada dia.">
+<title>Todas las ofertas | ChollosTech</title>
+<meta name="description" content="Todas las ofertas de Amazon en un solo listado, filtrable por descuento.">
 <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
@@ -20,204 +20,34 @@
   </div>
 </header>
 
-<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill active" href="index.html">Inicio</a><a class="cat-pill" href="ofertas.html">🔥 Todas las ofertas</a><a class="cat-pill" href="categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill" href="categorias/deportes.html">Deportes</a><a class="cat-pill" href="categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill" href="categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="categorias/mascotas.html">Mascotas</a></div></nav>
+<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill" href="index.html">Inicio</a><a class="cat-pill active" href="ofertas.html">🔥 Todas las ofertas</a><a class="cat-pill" href="categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill" href="categorias/deportes.html">Deportes</a><a class="cat-pill" href="categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill" href="categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="categorias/mascotas.html">Mascotas</a></div></nav>
 <main>
 
-    <div class="section" style="margin-top:0;">
-      <p style="color:var(--ink-muted); max-width:60ch;">Reunimos en un solo sitio las mejores ofertas de Amazon
-      seleccionadas cada dia: tecnologia, hogar, deporte, moda, bebe y mascotas. Usa el buscador de arriba o
-      explora por categoria.</p>
+    <div class="breadcrumb"><a href="index.html">Inicio</a> / Todas las ofertas</div>
+    <h1>Todas las ofertas</h1>
+    <p style="color:var(--ink-muted);">32 productos con descuento en todas las categorias. Filtra por descuento minimo o cambia el orden.</p>
+    
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Descuento minimo:</span>
+        <button class="filter-btn active" data-min="0">Todos</button>
+        <button class="filter-btn" data-min="10">10%+</button>
+        <button class="filter-btn" data-min="25">25%+</button>
+        <button class="filter-btn" data-min="40">40%+</button>
+        <button class="filter-btn" data-min="60">60%+</button>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="sort-select">Ordenar:</label>
+        <select id="sort-select" class="filter-select">
+          <option value="discount">Mayor descuento</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+      </div>
+      <span class="filter-count"><span id="result-count"></span> productos</span>
     </div>
     
-    <section class="section">
-      <div class="section-head"><h2>🔥 Ofertas del dia</h2></div>
-      <div class="card-grid">
-    <a class="card" href="articulos/gafas-sol-polarizadas.html" data-discount="43" data-price="15.99">
-      <img src="https://via.placeholder.com/400x300?text=Gafas+Sol" alt="Gafas de sol polarizadas unisex" loading="lazy">
-      <div class="cat-tag">Moda y Belleza</div>
-      <h3>Gafas de sol polarizadas unisex</h3>
-      <div class="rating">⭐ <b>4.2</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">27.99€</span>
-        <span class="price-new">15.99€</span>
-        <span class="discount">-43%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/auriculares-bt-x200.html" data-discount="40" data-price="29.99">
-      <img src="https://via.placeholder.com/400x300?text=Auriculares+X200" alt="Auriculares Bluetooth X200 con cancelacion de ruido" loading="lazy">
-      <div class="cat-tag">Tecnología</div>
-      <h3>Auriculares Bluetooth X200 con cancelacion de ruido</h3>
-      <div class="rating">⭐ <b>4.3</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">49.99€</span>
-        <span class="price-new">29.99€</span>
-        <span class="discount">-40%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/set-maquillaje-profesional.html" data-discount="40" data-price="17.99">
-      <img src="https://via.placeholder.com/400x300?text=Brochas+Maquillaje" alt="Set de brochas de maquillaje profesional (12 pzs)" loading="lazy">
-      <div class="cat-tag">Moda y Belleza</div>
-      <h3>Set de brochas de maquillaje profesional (12 pzs)</h3>
-      <div class="rating">⭐ <b>4.3</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">29.99€</span>
-        <span class="price-new">17.99€</span>
-        <span class="discount">-40%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/mochila-portatil-15.html" data-discount="38" data-price="24.99">
-      <img src="https://via.placeholder.com/400x300?text=Mochila+15" alt="Mochila para portatil 15.6 pulgadas antirrobo" loading="lazy">
-      <div class="cat-tag">Moda y Belleza</div>
-      <h3>Mochila para portatil 15.6 pulgadas antirrobo</h3>
-      <div class="rating">⭐ <b>4.3</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">39.99€</span>
-        <span class="price-new">24.99€</span>
-        <span class="discount">-38%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/webcam-1080p-autofoco.html" data-discount="37" data-price="26.99">
-      <img src="https://via.placeholder.com/400x300?text=Webcam+1080p" alt="Webcam 1080p con autofoco y microfono dual" loading="lazy">
-      <div class="cat-tag">Tecnología</div>
-      <h3>Webcam 1080p con autofoco y microfono dual</h3>
-      <div class="rating">⭐ <b>4.3</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">42.99€</span>
-        <span class="price-new">26.99€</span>
-        <span class="discount">-37%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/powerbank-20000.html" data-discount="36" data-price="22.50">
-      <img src="https://via.placeholder.com/400x300?text=Power+Bank" alt="Power bank 20000mAh carga rapida" loading="lazy">
-      <div class="cat-tag">Tecnología</div>
-      <h3>Power bank 20000mAh carga rapida</h3>
-      <div class="rating">⭐ <b>4.4</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">34.99€</span>
-        <span class="price-new">22.50€</span>
-        <span class="discount">-36%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/freidora-aire-5l.html" data-discount="36" data-price="44.99">
-      <img src="https://via.placeholder.com/400x300?text=Freidora+Aire" alt="Freidora de aire 5.5 litros digital" loading="lazy">
-      <div class="cat-tag">Hogar y Limpieza</div>
-      <h3>Freidora de aire 5.5 litros digital</h3>
-      <div class="rating">⭐ <b>4.5</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">69.99€</span>
-        <span class="price-new">44.99€</span>
-        <span class="discount">-36%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/purificador-aire-h1.html" data-discount="36" data-price="69.99">
-      <img src="https://via.placeholder.com/400x300?text=Purificador+H1" alt="Purificador de aire H1 con filtro HEPA" loading="lazy">
-      <div class="cat-tag">Hogar y Limpieza</div>
-      <h3>Purificador de aire H1 con filtro HEPA</h3>
-      <div class="rating">⭐ <b>4.3</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">109.99€</span>
-        <span class="price-new">69.99€</span>
-        <span class="discount">-36%</span>
-      </div>
-    </a></div>
-    </section>
-    
-    <section class="section">
-      <div class="section-head"><h2>⭐ Los mas demandados</h2></div>
-      <div class="card-grid">
-    <a class="card" href="articulos/auriculares-bt-x200.html" data-discount="40" data-price="29.99">
-      <img src="https://via.placeholder.com/400x300?text=Auriculares+X200" alt="Auriculares Bluetooth X200 con cancelacion de ruido" loading="lazy">
-      <div class="cat-tag">Tecnología</div>
-      <h3>Auriculares Bluetooth X200 con cancelacion de ruido</h3>
-      <div class="rating">⭐ <b>4.3</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">49.99€</span>
-        <span class="price-new">29.99€</span>
-        <span class="discount">-40%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/monitor-27-144hz.html" data-discount="29" data-price="199.00">
-      <img src="https://via.placeholder.com/400x300?text=Monitor+27" alt="Monitor 27 pulgadas 144Hz QHD" loading="lazy">
-      <div class="cat-tag">Tecnología</div>
-      <h3>Monitor 27 pulgadas 144Hz QHD</h3>
-      <div class="rating">⭐ <b>4.6</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">279.00€</span>
-        <span class="price-new">199.00€</span>
-        <span class="discount">-29%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/smartwatch-fit5.html" data-discount="31" data-price="54.90">
-      <img src="https://via.placeholder.com/400x300?text=Smartwatch+Fit5" alt="Smartwatch Fit5 con GPS y oximetro" loading="lazy">
-      <div class="cat-tag">Tecnología</div>
-      <h3>Smartwatch Fit5 con GPS y oximetro</h3>
-      <div class="rating">⭐ <b>4.1</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">79.90€</span>
-        <span class="price-new">54.90€</span>
-        <span class="discount">-31%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/ssd-1tb-externo.html" data-discount="35" data-price="64.99">
-      <img src="https://via.placeholder.com/400x300?text=SSD+1TB" alt="SSD externo 1TB USB-C alta velocidad" loading="lazy">
-      <div class="cat-tag">Tecnología</div>
-      <h3>SSD externo 1TB USB-C alta velocidad</h3>
-      <div class="rating">⭐ <b>4.7</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">99.99€</span>
-        <span class="price-new">64.99€</span>
-        <span class="discount">-35%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/robot-aspirador-rx9.html" data-discount="27" data-price="189.00">
-      <img src="https://via.placeholder.com/400x300?text=Robot+RX9" alt="Robot aspirador RX9 con mapeo laser" loading="lazy">
-      <div class="cat-tag">Hogar y Limpieza</div>
-      <h3>Robot aspirador RX9 con mapeo laser</h3>
-      <div class="rating">⭐ <b>4.5</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">259.00€</span>
-        <span class="price-new">189.00€</span>
-        <span class="discount">-27%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/freidora-aire-5l.html" data-discount="36" data-price="44.99">
-      <img src="https://via.placeholder.com/400x300?text=Freidora+Aire" alt="Freidora de aire 5.5 litros digital" loading="lazy">
-      <div class="cat-tag">Hogar y Limpieza</div>
-      <h3>Freidora de aire 5.5 litros digital</h3>
-      <div class="rating">⭐ <b>4.5</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">69.99€</span>
-        <span class="price-new">44.99€</span>
-        <span class="discount">-36%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/robot-friegasuelos-s3.html" data-discount="30" data-price="229.00">
-      <img src="https://via.placeholder.com/400x300?text=Friegasuelos+S3" alt="Robot friegasuelos S3 2 en 1" loading="lazy">
-      <div class="cat-tag">Hogar y Limpieza</div>
-      <h3>Robot friegasuelos S3 2 en 1</h3>
-      <div class="rating">⭐ <b>4.4</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">329.00€</span>
-        <span class="price-new">229.00€</span>
-        <span class="discount">-30%</span>
-      </div>
-    </a>
-    <a class="card" href="articulos/mancuernas-ajustables-20kg.html" data-discount="33" data-price="79.99">
-      <img src="https://via.placeholder.com/400x300?text=Mancuernas+20kg" alt="Mancuernas ajustables 20kg (par)" loading="lazy">
-      <div class="cat-tag">Deportes</div>
-      <h3>Mancuernas ajustables 20kg (par)</h3>
-      <div class="rating">⭐ <b>4.5</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">119.99€</span>
-        <span class="price-new">79.99€</span>
-        <span class="discount">-33%</span>
-      </div>
-    </a></div>
-    </section>
-    
-    <section class="section">
-      <div class="section-head"><h2>Tecnología</h2><a class="see-all" href="categorias/tecnologia.html">Ver todas →</a></div>
-      <div class="card-grid">
+    <div class="card-grid">
     <a class="card" href="articulos/auriculares-bt-x200.html" data-discount="40" data-price="29.99">
       <img src="https://via.placeholder.com/400x300?text=Auriculares+X200" alt="Auriculares Bluetooth X200 con cancelacion de ruido" loading="lazy">
       <div class="cat-tag">Tecnología</div>
@@ -261,11 +91,40 @@
         <span class="price-new">22.50€</span>
         <span class="discount">-36%</span>
       </div>
-    </a></div>
-    </section>
-    <section class="section">
-      <div class="section-head"><h2>Hogar y Limpieza</h2><a class="see-all" href="categorias/hogar-limpieza.html">Ver todas →</a></div>
-      <div class="card-grid">
+    </a>
+    <a class="card" href="articulos/smartwatch-fit5.html" data-discount="31" data-price="54.90">
+      <img src="https://via.placeholder.com/400x300?text=Smartwatch+Fit5" alt="Smartwatch Fit5 con GPS y oximetro" loading="lazy">
+      <div class="cat-tag">Tecnología</div>
+      <h3>Smartwatch Fit5 con GPS y oximetro</h3>
+      <div class="rating">⭐ <b>4.1</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">79.90€</span>
+        <span class="price-new">54.90€</span>
+        <span class="discount">-31%</span>
+      </div>
+    </a>
+    <a class="card" href="articulos/webcam-1080p-autofoco.html" data-discount="37" data-price="26.99">
+      <img src="https://via.placeholder.com/400x300?text=Webcam+1080p" alt="Webcam 1080p con autofoco y microfono dual" loading="lazy">
+      <div class="cat-tag">Tecnología</div>
+      <h3>Webcam 1080p con autofoco y microfono dual</h3>
+      <div class="rating">⭐ <b>4.3</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">42.99€</span>
+        <span class="price-new">26.99€</span>
+        <span class="discount">-37%</span>
+      </div>
+    </a>
+    <a class="card" href="articulos/ssd-1tb-externo.html" data-discount="35" data-price="64.99">
+      <img src="https://via.placeholder.com/400x300?text=SSD+1TB" alt="SSD externo 1TB USB-C alta velocidad" loading="lazy">
+      <div class="cat-tag">Tecnología</div>
+      <h3>SSD externo 1TB USB-C alta velocidad</h3>
+      <div class="rating">⭐ <b>4.7</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">99.99€</span>
+        <span class="price-new">64.99€</span>
+        <span class="discount">-35%</span>
+      </div>
+    </a>
     <a class="card" href="articulos/robot-aspirador-rx9.html" data-discount="27" data-price="189.00">
       <img src="https://via.placeholder.com/400x300?text=Robot+RX9" alt="Robot aspirador RX9 con mapeo laser" loading="lazy">
       <div class="cat-tag">Hogar y Limpieza</div>
@@ -309,11 +168,29 @@
         <span class="price-new">229.00€</span>
         <span class="discount">-30%</span>
       </div>
-    </a></div>
-    </section>
-    <section class="section">
-      <div class="section-head"><h2>Deportes</h2><a class="see-all" href="categorias/deportes.html">Ver todas →</a></div>
-      <div class="card-grid">
+    </a>
+    <a class="card" href="articulos/purificador-aire-h1.html" data-discount="36" data-price="69.99">
+      <img src="https://via.placeholder.com/400x300?text=Purificador+H1" alt="Purificador de aire H1 con filtro HEPA" loading="lazy">
+      <div class="cat-tag">Hogar y Limpieza</div>
+      <h3>Purificador de aire H1 con filtro HEPA</h3>
+      <div class="rating">⭐ <b>4.3</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">109.99€</span>
+        <span class="price-new">69.99€</span>
+        <span class="discount">-36%</span>
+      </div>
+    </a>
+    <a class="card" href="articulos/set-toallas-microfibra.html" data-discount="33" data-price="19.99">
+      <img src="https://via.placeholder.com/400x300?text=Toallas+Microfibra" alt="Set de 6 toallas de microfibra secado rapido" loading="lazy">
+      <div class="cat-tag">Hogar y Limpieza</div>
+      <h3>Set de 6 toallas de microfibra secado rapido</h3>
+      <div class="rating">⭐ <b>4.1</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">29.99€</span>
+        <span class="price-new">19.99€</span>
+        <span class="discount">-33%</span>
+      </div>
+    </a>
     <a class="card" href="articulos/esterilla-yoga-pro.html" data-discount="34" data-price="18.99">
       <img src="https://via.placeholder.com/400x300?text=Esterilla+Yoga" alt="Esterilla de yoga antideslizante Pro" loading="lazy">
       <div class="cat-tag">Deportes</div>
@@ -357,11 +234,29 @@
         <span class="price-new">16.99€</span>
         <span class="discount">-32%</span>
       </div>
-    </a></div>
-    </section>
-    <section class="section">
-      <div class="section-head"><h2>Moda y Belleza</h2><a class="see-all" href="categorias/moda-belleza.html">Ver todas →</a></div>
-      <div class="card-grid">
+    </a>
+    <a class="card" href="articulos/reloj-gps-running.html" data-discount="36" data-price="89.99">
+      <img src="https://via.placeholder.com/400x300?text=Reloj+GPS" alt="Reloj deportivo GPS para running" loading="lazy">
+      <div class="cat-tag">Deportes</div>
+      <h3>Reloj deportivo GPS para running</h3>
+      <div class="rating">⭐ <b>4.5</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">139.99€</span>
+        <span class="price-new">89.99€</span>
+        <span class="discount">-36%</span>
+      </div>
+    </a>
+    <a class="card" href="articulos/bicicleta-estatica-plegable.html" data-discount="33" data-price="159.00">
+      <img src="https://via.placeholder.com/400x300?text=Bici+Estatica" alt="Bicicleta estatica plegable para casa" loading="lazy">
+      <div class="cat-tag">Deportes</div>
+      <h3>Bicicleta estatica plegable para casa</h3>
+      <div class="rating">⭐ <b>4.2</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">239.00€</span>
+        <span class="price-new">159.00€</span>
+        <span class="discount">-33%</span>
+      </div>
+    </a>
     <a class="card" href="articulos/secador-ionico-2000w.html" data-discount="33" data-price="29.99">
       <img src="https://via.placeholder.com/400x300?text=Secador+Ionico" alt="Secador de pelo ionico 2000W" loading="lazy">
       <div class="cat-tag">Moda y Belleza</div>
@@ -405,11 +300,18 @@
         <span class="price-new">15.99€</span>
         <span class="discount">-43%</span>
       </div>
-    </a></div>
-    </section>
-    <section class="section">
-      <div class="section-head"><h2>Bebé y Niños</h2><a class="see-all" href="categorias/bebe-ninos.html">Ver todas →</a></div>
-      <div class="card-grid">
+    </a>
+    <a class="card" href="articulos/set-maquillaje-profesional.html" data-discount="40" data-price="17.99">
+      <img src="https://via.placeholder.com/400x300?text=Brochas+Maquillaje" alt="Set de brochas de maquillaje profesional (12 pzs)" loading="lazy">
+      <div class="cat-tag">Moda y Belleza</div>
+      <h3>Set de brochas de maquillaje profesional (12 pzs)</h3>
+      <div class="rating">⭐ <b>4.3</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">29.99€</span>
+        <span class="price-new">17.99€</span>
+        <span class="discount">-40%</span>
+      </div>
+    </a>
     <a class="card" href="articulos/monitor-bebe-video.html" data-discount="35" data-price="54.99">
       <img src="https://via.placeholder.com/400x300?text=Monitor+Bebe" alt="Monitor de bebe con video HD y vision nocturna" loading="lazy">
       <div class="cat-tag">Bebé y Niños</div>
@@ -453,11 +355,7 @@
         <span class="price-new">24.99€</span>
         <span class="discount">-29%</span>
       </div>
-    </a></div>
-    </section>
-    <section class="section">
-      <div class="section-head"><h2>Mascotas</h2><a class="see-all" href="categorias/mascotas.html">Ver todas →</a></div>
-      <div class="card-grid">
+    </a>
     <a class="card" href="articulos/fuente-agua-gatos.html" data-discount="33" data-price="19.99">
       <img src="https://via.placeholder.com/400x300?text=Fuente+Gatos" alt="Fuente de agua para gatos con filtro" loading="lazy">
       <div class="cat-tag">Mascotas</div>
@@ -502,7 +400,8 @@
         <span class="discount">-36%</span>
       </div>
     </a></div>
-    </section>
+    <div class="load-more-wrap"><button id="load-more">Cargar mas</button></div>
+    
 </main>
 <footer>
   &copy; ChollosTech. <a href="legal/aviso-legal.html">Aviso legal</a> ·

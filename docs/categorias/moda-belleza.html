@@ -20,13 +20,34 @@
   </div>
 </header>
 
-<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill" href="../index.html">Inicio</a><a class="cat-pill" href="../categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="../categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill" href="../categorias/deportes.html">Deportes</a><a class="cat-pill active" href="../categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill" href="../categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="../categorias/mascotas.html">Mascotas</a></div></nav>
+<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill" href="../index.html">Inicio</a><a class="cat-pill" href="../ofertas.html">🔥 Todas las ofertas</a><a class="cat-pill" href="../categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="../categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill" href="../categorias/deportes.html">Deportes</a><a class="cat-pill active" href="../categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill" href="../categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="../categorias/mascotas.html">Mascotas</a></div></nav>
 <main>
 
     <div class="breadcrumb"><a href="../index.html">Inicio</a> / Moda y Belleza</div>
     <h1>Moda y Belleza: todas las ofertas</h1>
+    
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Descuento minimo:</span>
+        <button class="filter-btn active" data-min="0">Todos</button>
+        <button class="filter-btn" data-min="10">10%+</button>
+        <button class="filter-btn" data-min="25">25%+</button>
+        <button class="filter-btn" data-min="40">40%+</button>
+        <button class="filter-btn" data-min="60">60%+</button>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="sort-select">Ordenar:</label>
+        <select id="sort-select" class="filter-select">
+          <option value="discount">Mayor descuento</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+      </div>
+      <span class="filter-count"><span id="result-count"></span> productos</span>
+    </div>
+    
     <div class="card-grid">
-    <a class="card" href="../articulos/secador-ionico-2000w.html">
+    <a class="card" href="../articulos/secador-ionico-2000w.html" data-discount="33" data-price="29.99">
       <img src="https://via.placeholder.com/400x300?text=Secador+Ionico" alt="Secador de pelo ionico 2000W" loading="lazy">
       <div class="cat-tag">Moda y Belleza</div>
       <h3>Secador de pelo ionico 2000W</h3>
@@ -37,7 +58,7 @@
         <span class="discount">-33%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/plancha-pelo-titanio.html">
+    <a class="card" href="../articulos/plancha-pelo-titanio.html" data-discount="36" data-price="34.99">
       <img src="https://via.placeholder.com/400x300?text=Plancha+Titanio" alt="Plancha de pelo de titanio profesional" loading="lazy">
       <div class="cat-tag">Moda y Belleza</div>
       <h3>Plancha de pelo de titanio profesional</h3>
@@ -48,7 +69,7 @@
         <span class="discount">-36%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/mochila-portatil-15.html">
+    <a class="card" href="../articulos/mochila-portatil-15.html" data-discount="38" data-price="24.99">
       <img src="https://via.placeholder.com/400x300?text=Mochila+15" alt="Mochila para portatil 15.6 pulgadas antirrobo" loading="lazy">
       <div class="cat-tag">Moda y Belleza</div>
       <h3>Mochila para portatil 15.6 pulgadas antirrobo</h3>
@@ -59,7 +80,7 @@
         <span class="discount">-38%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/gafas-sol-polarizadas.html">
+    <a class="card" href="../articulos/gafas-sol-polarizadas.html" data-discount="43" data-price="15.99">
       <img src="https://via.placeholder.com/400x300?text=Gafas+Sol" alt="Gafas de sol polarizadas unisex" loading="lazy">
       <div class="cat-tag">Moda y Belleza</div>
       <h3>Gafas de sol polarizadas unisex</h3>
@@ -70,7 +91,7 @@
         <span class="discount">-43%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/set-maquillaje-profesional.html">
+    <a class="card" href="../articulos/set-maquillaje-profesional.html" data-discount="40" data-price="17.99">
       <img src="https://via.placeholder.com/400x300?text=Brochas+Maquillaje" alt="Set de brochas de maquillaje profesional (12 pzs)" loading="lazy">
       <div class="cat-tag">Moda y Belleza</div>
       <h3>Set de brochas de maquillaje profesional (12 pzs)</h3>
@@ -81,6 +102,7 @@
         <span class="discount">-40%</span>
       </div>
     </a></div>
+    <div class="load-more-wrap"><button id="load-more">Cargar mas</button></div>
     
 </main>
 <footer>
@@ -97,5 +119,6 @@
 
 <script src="../static/cookie-consent.js"></script>
 <script src="../static/search.js"></script>
+<script src="../static/filter.js"></script>
 </body>
 </html>

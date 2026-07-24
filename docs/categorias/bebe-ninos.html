@@ -20,13 +20,34 @@
   </div>
 </header>
 
-<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill" href="../index.html">Inicio</a><a class="cat-pill" href="../categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="../categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill" href="../categorias/deportes.html">Deportes</a><a class="cat-pill" href="../categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill active" href="../categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="../categorias/mascotas.html">Mascotas</a></div></nav>
+<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill" href="../index.html">Inicio</a><a class="cat-pill" href="../ofertas.html">🔥 Todas las ofertas</a><a class="cat-pill" href="../categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="../categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill" href="../categorias/deportes.html">Deportes</a><a class="cat-pill" href="../categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill active" href="../categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="../categorias/mascotas.html">Mascotas</a></div></nav>
 <main>
 
     <div class="breadcrumb"><a href="../index.html">Inicio</a> / Bebé y Niños</div>
     <h1>Bebé y Niños: todas las ofertas</h1>
+    
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Descuento minimo:</span>
+        <button class="filter-btn active" data-min="0">Todos</button>
+        <button class="filter-btn" data-min="10">10%+</button>
+        <button class="filter-btn" data-min="25">25%+</button>
+        <button class="filter-btn" data-min="40">40%+</button>
+        <button class="filter-btn" data-min="60">60%+</button>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="sort-select">Ordenar:</label>
+        <select id="sort-select" class="filter-select">
+          <option value="discount">Mayor descuento</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+      </div>
+      <span class="filter-count"><span id="result-count"></span> productos</span>
+    </div>
+    
     <div class="card-grid">
-    <a class="card" href="../articulos/monitor-bebe-video.html">
+    <a class="card" href="../articulos/monitor-bebe-video.html" data-discount="35" data-price="54.99">
       <img src="https://via.placeholder.com/400x300?text=Monitor+Bebe" alt="Monitor de bebe con video HD y vision nocturna" loading="lazy">
       <div class="cat-tag">Bebé y Niños</div>
       <h3>Monitor de bebe con video HD y vision nocturna</h3>
@@ -37,7 +58,7 @@
         <span class="discount">-35%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/silla-paseo-ligera.html">
+    <a class="card" href="../articulos/silla-paseo-ligera.html" data-discount="36" data-price="89.99">
       <img src="https://via.placeholder.com/400x300?text=Silla+Paseo" alt="Silla de paseo ligera plegable" loading="lazy">
       <div class="cat-tag">Bebé y Niños</div>
       <h3>Silla de paseo ligera plegable</h3>
@@ -48,7 +69,7 @@
         <span class="discount">-36%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/esterilizador-biberones.html">
+    <a class="card" href="../articulos/esterilizador-biberones.html" data-discount="33" data-price="39.99">
       <img src="https://via.placeholder.com/400x300?text=Esterilizador" alt="Esterilizador de biberones a vapor" loading="lazy">
       <div class="cat-tag">Bebé y Niños</div>
       <h3>Esterilizador de biberones a vapor</h3>
@@ -59,7 +80,7 @@
         <span class="discount">-33%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/juguete-educativo-stem.html">
+    <a class="card" href="../articulos/juguete-educativo-stem.html" data-discount="29" data-price="24.99">
       <img src="https://via.placeholder.com/400x300?text=Juguete+STEM" alt="Juguete educativo STEM de construccion" loading="lazy">
       <div class="cat-tag">Bebé y Niños</div>
       <h3>Juguete educativo STEM de construccion</h3>
@@ -70,6 +91,7 @@
         <span class="discount">-29%</span>
       </div>
     </a></div>
+    <div class="load-more-wrap"><button id="load-more">Cargar mas</button></div>
     
 </main>
 <footer>
@@ -86,5 +108,6 @@
 
 <script src="../static/cookie-consent.js"></script>
 <script src="../static/search.js"></script>
+<script src="../static/filter.js"></script>
 </body>
 </html>

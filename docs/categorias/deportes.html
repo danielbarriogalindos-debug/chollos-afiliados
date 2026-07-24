@@ -20,13 +20,34 @@
   </div>
 </header>
 
-<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill" href="../index.html">Inicio</a><a class="cat-pill" href="../categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="../categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill active" href="../categorias/deportes.html">Deportes</a><a class="cat-pill" href="../categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill" href="../categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="../categorias/mascotas.html">Mascotas</a></div></nav>
+<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill" href="../index.html">Inicio</a><a class="cat-pill" href="../ofertas.html">🔥 Todas las ofertas</a><a class="cat-pill" href="../categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="../categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill active" href="../categorias/deportes.html">Deportes</a><a class="cat-pill" href="../categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill" href="../categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="../categorias/mascotas.html">Mascotas</a></div></nav>
 <main>
 
     <div class="breadcrumb"><a href="../index.html">Inicio</a> / Deportes</div>
     <h1>Deportes: todas las ofertas</h1>
+    
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Descuento minimo:</span>
+        <button class="filter-btn active" data-min="0">Todos</button>
+        <button class="filter-btn" data-min="10">10%+</button>
+        <button class="filter-btn" data-min="25">25%+</button>
+        <button class="filter-btn" data-min="40">40%+</button>
+        <button class="filter-btn" data-min="60">60%+</button>
+      </div>
+      <div class="filter-group">
+        <label class="filter-label" for="sort-select">Ordenar:</label>
+        <select id="sort-select" class="filter-select">
+          <option value="discount">Mayor descuento</option>
+          <option value="price-asc">Precio: menor a mayor</option>
+          <option value="price-desc">Precio: mayor a menor</option>
+        </select>
+      </div>
+      <span class="filter-count"><span id="result-count"></span> productos</span>
+    </div>
+    
     <div class="card-grid">
-    <a class="card" href="../articulos/esterilla-yoga-pro.html">
+    <a class="card" href="../articulos/esterilla-yoga-pro.html" data-discount="34" data-price="18.99">
       <img src="https://via.placeholder.com/400x300?text=Esterilla+Yoga" alt="Esterilla de yoga antideslizante Pro" loading="lazy">
       <div class="cat-tag">Deportes</div>
       <h3>Esterilla de yoga antideslizante Pro</h3>
@@ -37,7 +58,7 @@
         <span class="discount">-34%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/mancuernas-ajustables-20kg.html">
+    <a class="card" href="../articulos/mancuernas-ajustables-20kg.html" data-discount="33" data-price="79.99">
       <img src="https://via.placeholder.com/400x300?text=Mancuernas+20kg" alt="Mancuernas ajustables 20kg (par)" loading="lazy">
       <div class="cat-tag">Deportes</div>
       <h3>Mancuernas ajustables 20kg (par)</h3>
@@ -48,7 +69,7 @@
         <span class="discount">-33%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/banda-resistencia-set.html">
+    <a class="card" href="../articulos/banda-resistencia-set.html" data-discount="35" data-price="14.99">
       <img src="https://via.placeholder.com/400x300?text=Bandas+Resistencia" alt="Set de 5 bandas de resistencia" loading="lazy">
       <div class="cat-tag">Deportes</div>
       <h3>Set de 5 bandas de resistencia</h3>
@@ -59,7 +80,7 @@
         <span class="discount">-35%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/botella-termica-1l.html">
+    <a class="card" href="../articulos/botella-termica-1l.html" data-discount="32" data-price="16.99">
       <img src="https://via.placeholder.com/400x300?text=Botella+Termica" alt="Botella termica de acero inoxidable 1L" loading="lazy">
       <div class="cat-tag">Deportes</div>
       <h3>Botella termica de acero inoxidable 1L</h3>
@@ -70,7 +91,7 @@
         <span class="discount">-32%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/reloj-gps-running.html">
+    <a class="card" href="../articulos/reloj-gps-running.html" data-discount="36" data-price="89.99">
       <img src="https://via.placeholder.com/400x300?text=Reloj+GPS" alt="Reloj deportivo GPS para running" loading="lazy">
       <div class="cat-tag">Deportes</div>
       <h3>Reloj deportivo GPS para running</h3>
@@ -81,7 +102,7 @@
         <span class="discount">-36%</span>
       </div>
     </a>
-    <a class="card" href="../articulos/bicicleta-estatica-plegable.html">
+    <a class="card" href="../articulos/bicicleta-estatica-plegable.html" data-discount="33" data-price="159.00">
       <img src="https://via.placeholder.com/400x300?text=Bici+Estatica" alt="Bicicleta estatica plegable para casa" loading="lazy">
       <div class="cat-tag">Deportes</div>
       <h3>Bicicleta estatica plegable para casa</h3>
@@ -92,6 +113,7 @@
         <span class="discount">-33%</span>
       </div>
     </a></div>
+    <div class="load-more-wrap"><button id="load-more">Cargar mas</button></div>
     
 </main>
 <footer>
@@ -108,5 +130,6 @@
 
 <script src="../static/cookie-consent.js"></script>
 <script src="../static/search.js"></script>
+<script src="../static/filter.js"></script>
 </body>
 </html>

@@ -77,6 +77,18 @@ main { max-width: 1180px; margin: 0 auto; padding: 1.6rem 1rem 3rem; }
 
 .related-grid { margin-top: 2rem; }
 
+/* Filtro y orden */
+.filter-bar { display: flex; align-items: center; gap: 1.4rem; flex-wrap: wrap; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 1rem; margin-bottom: 1.2rem; }
+.filter-group { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.filter-label { font-size: 0.82rem; color: var(--ink-muted); font-weight: 600; }
+.filter-btn { border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 0.82rem; padding: 0.32rem 0.75rem; border-radius: 999px; cursor: pointer; }
+.filter-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 700; }
+.filter-select { border: 1px solid var(--line); background: var(--bg); color: var(--ink); font-size: 0.82rem; padding: 0.32rem 0.6rem; border-radius: 8px; }
+.filter-count { margin-left: auto; font-size: 0.8rem; color: var(--ink-muted); }
+.load-more-wrap { text-align: center; margin-top: 1.6rem; }
+#load-more { border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-weight: 700; padding: 0.7rem 1.6rem; border-radius: 10px; cursor: pointer; font-size: 0.9rem; }
+#load-more:hover { border-color: var(--accent); }
+
 footer { text-align: center; padding: 2rem 1rem; font-size: .85rem; color: var(--ink-muted); }
 footer a { color: var(--ink-muted); }
 
