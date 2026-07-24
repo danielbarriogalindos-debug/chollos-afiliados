@@ -17,19 +17,30 @@ INTROS = [
     "Te contamos por que {name} esta llamando la atencion en las ultimas horas.",
 ]
 
+CATEGORY_LABELS = {
+    "tecnologia": "Tecnología",
+    "hogar-limpieza": "Hogar y Limpieza",
+    "deportes": "Deportes",
+    "moda-belleza": "Moda y Belleza",
+    "bebe-ninos": "Bebé y Niños",
+    "mascotas": "Mascotas",
+}
+
 CATEGORY_PROS = {
-    "audio": ["Buena calidad de sonido para el precio", "Comoda para uso prolongado", "Bateria de larga duracion"],
-    "hogar": ["Facil de usar desde el primer dia", "Ahorra tiempo en tareas domesticas", "Buena relacion calidad-precio"],
-    "informatica": ["Buen rendimiento para el precio", "Construccion solida", "Compatible con la mayoria de setups"],
-    "accesorios": ["Muy practico para el dia a dia", "Buena relacion calidad-precio", "Facil de transportar"],
-    "wearables": ["Buena autonomia de bateria", "App companion sencilla de usar", "Sensores bastante precisos"],
+    "tecnologia": ["Buen rendimiento para el precio", "Construccion solida", "Compatible con la mayoria de setups"],
+    "hogar-limpieza": ["Facil de usar desde el primer dia", "Ahorra tiempo en tareas domesticas", "Buena relacion calidad-precio"],
+    "deportes": ["Buena relacion calidad-precio", "Resistente para uso frecuente", "Facil de guardar o transportar"],
+    "moda-belleza": ["Buenos resultados para el precio", "Comodo de usar a diario", "Buena relacion calidad-precio"],
+    "bebe-ninos": ["Pensado para el uso diario con niños", "Materiales seguros y faciles de limpiar", "Buena relacion calidad-precio"],
+    "mascotas": ["Facil de limpiar y mantener", "Comodo para el animal", "Buena relacion calidad-precio"],
 }
 CATEGORY_CONS = {
-    "audio": ["La app companion es basica", "El estuche de carga es algo grande"],
-    "hogar": ["El manual de instrucciones es escueto", "El nivel de ruido podria ser menor"],
-    "informatica": ["El software de configuracion es mejorable", "Los cables incluidos son cortos"],
-    "accesorios": ["Los colores disponibles son limitados", "El acolchado podria ser mayor"],
-    "wearables": ["Las notificaciones a veces se retrasan", "La correa de serie es basica"],
+    "tecnologia": ["El software de configuracion es mejorable", "Los cables incluidos son cortos"],
+    "hogar-limpieza": ["El manual de instrucciones es escueto", "El nivel de ruido podria ser menor"],
+    "deportes": ["El tamaño de embalaje es grande", "Alguna pieza se vende por separado"],
+    "moda-belleza": ["Los colores disponibles son limitados", "El cable de alimentacion es algo corto"],
+    "bebe-ninos": ["El manual viene solo en varios idiomas genericos", "El montaje inicial lleva unos minutos"],
+    "mascotas": ["No apto para mascotas muy grandes", "Requiere limpieza periodica para mejor rendimiento"],
 }
 
 DISCLOSURE = (
@@ -104,9 +115,11 @@ def generate_article(product, index):
 
     return {
         "slug": product["slug"],
+        "name": name,
         "title": f"{name}: oferta con {discount_pct}% de descuento",
         "meta_description": f"{name} rebajado a {price:.2f}€ ({discount_pct}% de descuento). Analizamos si merece la pena.",
         "category": category,
+        "category_label": CATEGORY_LABELS.get(category, category.replace("-", " ").title()),
         "price": price,
         "old_price": old_price,
         "discount_pct": discount_pct,
@@ -114,6 +127,7 @@ def generate_article(product, index):
         "image_url": product["image_url"],
         "affiliate_link": product["affiliate_link"],
         "body_html": body_html,
+        "featured": product.get("featured", "no").strip().lower() == "si",
         "published": date.today().isoformat(),
     }
 

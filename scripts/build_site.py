@@ -2,35 +2,164 @@
 Construye el sitio estatico final en /docs a partir de la lista de articulos.
 Se sirve directamente con GitHub Pages (gratis) apuntando a la carpeta /docs
 de la rama main, sin necesidad de servidor propio.
+
+Estructura del sitio generado:
+  docs/index.html                  -> portada con buscador, destacados y categorias
+  docs/categorias/{slug}.html      -> listado completo de una categoria
+  docs/articulos/{slug}.html       -> ficha de producto con relacionados
+  docs/products.json               -> indice para el buscador en vivo (cliente)
+  docs/static/                     -> css/js compartidos
+  docs/legal/                      -> aviso legal, privacidad, cookies
 """
+import json
 import os
 import shutil
+
+from generate_content import CATEGORY_LABELS
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "docs")
 SITE_NAME = "ChollosTech"
 # Cambia esto si compras un dominio propio y lo apuntas a GitHub Pages.
 SITE_URL = "https://danielbarriogalindos-debug.github.io/chollos-afiliados"
 
+CATEGORY_ORDER = ["tecnologia", "hogar-limpieza", "deportes", "moda-belleza", "bebe-ninos", "mascotas"]
+
 BASE_CSS = """
+:root {
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --ink: #16181d;
+  --ink-muted: #5b616e;
+  --line: #e4e6ea;
+  --brand: #16213e;
+  --accent: #ff9900;
+  --accent-ink: #3d2604;
+  --ok: #1c7a4d;
+  --radius: 12px;
+}
 * { box-sizing: border-box; }
-body { font-family: -apple-system, Arial, sans-serif; margin: 0; background: #f7f7f9; color: #222; }
-header { background: #1a1a2e; color: white; padding: 1.2rem 1rem; }
-header a { color: white; text-decoration: none; font-weight: bold; font-size: 1.3rem; }
-main { max-width: 900px; margin: 0 auto; padding: 1.5rem 1rem; }
-.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; }
-.card { background: white; border-radius: 10px; padding: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
-.card img { max-width: 100%; border-radius: 6px; }
-.card h3 { font-size: 1.05rem; margin: .5rem 0; }
-.price-box { display: flex; align-items: center; gap: .6rem; margin: 1rem 0; }
-.price-old { text-decoration: line-through; color: #888; }
-.price-new { font-size: 1.4rem; font-weight: bold; color: #d10000; }
-.discount { background: #d10000; color: white; padding: .15rem .5rem; border-radius: 6px; font-size: .85rem; }
-.cta-button { display: inline-block; background: #ff9900; color: #111; padding: .7rem 1.2rem; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: .5rem; }
-.disclosure { font-size: .8rem; color: #666; margin-top: 1.5rem; border-top: 1px solid #ddd; padding-top: .8rem; }
-footer { text-align: center; padding: 2rem 1rem; font-size: .85rem; color: #666; }
-footer a { color: #666; }
-#cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: #1a1a2e; color: white; padding: 1rem; display: none; z-index: 999; }
-#cookie-banner button { background: #ff9900; border: none; padding: .5rem 1rem; border-radius: 6px; margin-left: 1rem; cursor: pointer; font-weight: bold; }
+html { scroll-behavior: smooth; }
+body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; background: var(--bg); color: var(--ink); line-height: 1.5; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* Header + buscador */
+.site-header { position: sticky; top: 0; z-index: 50; background: var(--brand); color: white; padding: 0.8rem 1rem; }
+.site-header-inner { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.logo { color: white; text-decoration: none; font-weight: 800; font-size: 1.3rem; letter-spacing: -0.01em; white-space: nowrap; }
+.logo span { color: var(--accent); }
+.search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 520px; }
+.search-input { width: 100%; padding: 0.6rem 0.9rem; border-radius: 999px; border: none; font-size: 0.95rem; outline: none; }
+.search-results { position: absolute; top: calc(100% + 6px); left: 0; right: 0; background: var(--surface); color: var(--ink); border-radius: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.18); overflow: hidden; display: none; max-height: 60vh; overflow-y: auto; z-index: 60; }
+.search-results.open { display: block; }
+.search-result-item { display: flex; gap: 0.7rem; align-items: center; padding: 0.55rem 0.8rem; text-decoration: none; color: var(--ink); border-bottom: 1px solid var(--line); }
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: #f7f7f9; }
+.search-result-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; flex-shrink: 0; }
+.search-result-empty { padding: 0.9rem; color: var(--ink-muted); font-size: 0.9rem; }
+.search-result-meta { font-size: 0.78rem; color: var(--ink-muted); }
+.search-result-price { margin-left: auto; font-weight: 700; color: var(--accent); white-space: nowrap; }
+
+/* Nav de categorias */
+.cat-nav { background: #1f2a4d; padding: 0.6rem 1rem; }
+.cat-nav-inner { max-width: 1180px; margin: 0 auto; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.cat-pill { color: #dfe3ee; text-decoration: none; font-size: 0.85rem; padding: 0.32rem 0.85rem; border-radius: 999px; background: rgba(255,255,255,0.08); white-space: nowrap; }
+.cat-pill:hover, .cat-pill.active { background: var(--accent); color: var(--accent-ink); font-weight: 700; }
+
+main { max-width: 1180px; margin: 0 auto; padding: 1.6rem 1rem 3rem; }
+
+/* Breadcrumb */
+.breadcrumb { font-size: 0.82rem; color: var(--ink-muted); margin-bottom: 1rem; }
+.breadcrumb a { text-decoration: none; color: var(--ink-muted); }
+.breadcrumb a:hover { text-decoration: underline; }
+
+/* Secciones y grid de productos */
+.section { margin: 2.2rem 0; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin-bottom: 0.9rem; }
+.section-head h2 { font-size: 1.25rem; margin: 0; }
+.section-head .see-all { font-size: 0.85rem; color: var(--accent-ink); background: #fff3e0; padding: 0.3rem 0.7rem; border-radius: 999px; text-decoration: none; font-weight: 600; white-space: nowrap; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+
+.card { background: var(--surface); border-radius: var(--radius); padding: 0.9rem; text-decoration: none; color: inherit; border: 1px solid var(--line); transition: box-shadow .15s, transform .15s; display: flex; flex-direction: column; }
+.card:hover { box-shadow: 0 10px 24px rgba(16,24,40,.10); transform: translateY(-2px); }
+.card img { border-radius: 8px; aspect-ratio: 4/3; object-fit: cover; margin-bottom: 0.6rem; }
+.card h3 { font-size: 0.95rem; margin: 0 0 0.5rem; line-height: 1.35; }
+.card .cat-tag { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-muted); font-weight: 700; margin-bottom: 0.3rem; }
+.rating { font-size: 0.8rem; color: var(--ink-muted); margin-bottom: 0.4rem; }
+.rating b { color: var(--ink); }
+
+.price-box { display: flex; align-items: center; gap: .5rem; margin-top: auto; padding-top: .5rem; flex-wrap: wrap; }
+.price-old { text-decoration: line-through; color: var(--ink-muted); font-size: 0.85rem; }
+.price-new { font-size: 1.25rem; font-weight: 800; color: var(--ink); }
+.discount { background: #ffe4b8; color: var(--accent-ink); padding: .12rem .5rem; border-radius: 6px; font-size: .78rem; font-weight: 700; }
+
+/* Pagina de producto */
+.article-head h1 { font-size: 1.6rem; text-wrap: balance; margin-bottom: .3rem; }
+.article-meta { color: var(--ink-muted); font-size: 0.85rem; margin-bottom: 1.2rem; }
+.article-body img { border-radius: var(--radius); margin-bottom: 1rem; max-width: 360px; }
+.cta-button { display: inline-block; background: var(--accent); color: var(--accent-ink); padding: .8rem 1.4rem; border-radius: 10px; text-decoration: none; font-weight: 800; margin-top: .5rem; }
+.cta-button:hover { filter: brightness(1.05); }
+.disclosure { font-size: .8rem; color: var(--ink-muted); margin-top: 1.5rem; border-top: 1px solid var(--line); padding-top: .8rem; }
+
+.related-grid { margin-top: 2rem; }
+
+footer { text-align: center; padding: 2rem 1rem; font-size: .85rem; color: var(--ink-muted); }
+footer a { color: var(--ink-muted); }
+
+#cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--brand); color: white; padding: 1rem; display: none; z-index: 999; }
+#cookie-banner button { background: var(--accent); color: var(--accent-ink); border: none; padding: .5rem 1rem; border-radius: 6px; margin-left: 1rem; cursor: pointer; font-weight: bold; }
+
+@media (max-width: 640px) {
+  .search-wrap { order: 3; flex-basis: 100%; }
+}
+"""
+
+SEARCH_JS = """
+(function () {
+  var input = document.getElementById('site-search');
+  var box = document.getElementById('search-results');
+  var root = window.SITE_ROOT || '';
+  var data = null;
+
+  function ensureData(cb) {
+    if (data) return cb();
+    fetch(root + 'products.json').then(function (r) { return r.json(); }).then(function (json) {
+      data = json;
+      cb();
+    });
+  }
+
+  function render(query) {
+    var q = query.trim().toLowerCase();
+    if (!q) { box.classList.remove('open'); box.innerHTML = ''; return; }
+    var matches = data.filter(function (p) {
+      return p.name.toLowerCase().indexOf(q) !== -1 || p.category_label.toLowerCase().indexOf(q) !== -1;
+    }).slice(0, 8);
+
+    if (matches.length === 0) {
+      box.innerHTML = '<div class="search-result-empty">Sin resultados para "' + query + '"</div>';
+    } else {
+      box.innerHTML = matches.map(function (p) {
+        return '<a class="search-result-item" href="' + root + 'articulos/' + p.slug + '.html">' +
+          '<img src="' + p.image_url + '" alt="">' +
+          '<span><div>' + p.name + '</div><div class="search-result-meta">' + p.category_label + '</div></span>' +
+          '<span class="search-result-price">' + p.price.toFixed(2) + '€</span>' +
+          '</a>';
+      }).join('');
+    }
+    box.classList.add('open');
+  }
+
+  input.addEventListener('input', function () {
+    ensureData(function () { render(input.value); });
+  });
+  input.addEventListener('focus', function () {
+    if (input.value) ensureData(function () { render(input.value); });
+  });
+  document.addEventListener('click', function (e) {
+    if (!box.contains(e.target) && e.target !== input) box.classList.remove('open');
+  });
+})();
 """
 
 COOKIE_JS = """
@@ -45,6 +174,9 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 """
 
+DISCOUNT_PLACEHOLDER = "https://via.placeholder.com/40x40?text=%20"
+
+
 def cookie_banner_html(root):
     return f"""
 <div id="cookie-banner">
@@ -55,13 +187,35 @@ def cookie_banner_html(root):
 """
 
 
-def page_shell(title, body, description="", root=""):
+def category_nav_html(root, active=None):
+    pills = [f'<a class="cat-pill{" active" if active is None else ""}" href="{root}index.html">Inicio</a>']
+    for slug in CATEGORY_ORDER:
+        label = CATEGORY_LABELS[slug]
+        cls = "cat-pill active" if slug == active else "cat-pill"
+        pills.append(f'<a class="{cls}" href="{root}categorias/{slug}.html">{label}</a>')
+    return f'<nav class="cat-nav"><div class="cat-nav-inner">{"".join(pills)}</div></nav>'
+
+
+def header_html(root):
+    return f"""
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="logo" href="{root}index.html">Chollos<span>Tech</span></a>
+    <div class="search-wrap">
+      <input id="site-search" class="search-input" type="text" placeholder="Busca un producto o categoria (ej. auriculares, yoga...)" autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+"""
+
+
+def page_shell(title, body, description="", root="", active_category=None):
     """
     root = prefijo relativo hacia la carpeta docs/. "" si la pagina esta en la
-    raiz (index.html), "../" si esta un nivel mas abajo (articulos/, legal/).
-    Usar rutas relativas en vez de absolutas es necesario porque GitHub Pages
-    sirve este sitio bajo una subcarpeta (/chollos-afiliados/), no en la raiz
-    del dominio.
+    raiz (index.html), "../" si esta un nivel mas abajo (articulos/, categorias/, legal/).
+    Rutas relativas porque GitHub Pages sirve este sitio bajo una subcarpeta
+    (/chollos-afiliados/), no en la raiz del dominio.
     """
     return f"""<!DOCTYPE html>
 <html lang="es">
@@ -73,7 +227,9 @@ def page_shell(title, body, description="", root=""):
 <link rel="stylesheet" href="{root}static/style.css">
 </head>
 <body>
-<header><a href="{root}index.html">{SITE_NAME}</a></header>
+<script>window.SITE_ROOT = "{root}";</script>
+{header_html(root)}
+{category_nav_html(root, active_category)}
 <main>
 {body}
 </main>
@@ -84,30 +240,88 @@ def page_shell(title, body, description="", root=""):
 </footer>
 {cookie_banner_html(root)}
 <script src="{root}static/cookie-consent.js"></script>
+<script src="{root}static/search.js"></script>
 </body>
 </html>"""
 
 
+def product_card(a, root):
+    return f"""
+    <a class="card" href="{root}articulos/{a['slug']}.html">
+      <img src="{a['image_url']}" alt="{a['name']}" loading="lazy">
+      <div class="cat-tag">{a['category_label']}</div>
+      <h3>{a['name']}</h3>
+      <div class="rating">⭐ <b>{a['rating']}</b>/5</div>
+      <div class="price-box">
+        <span class="price-old">{a['old_price']:.2f}€</span>
+        <span class="price-new">{a['price']:.2f}€</span>
+        <span class="discount">-{a['discount_pct']}%</span>
+      </div>
+    </a>"""
+
+
+def section_html(title, items, root, see_all_href=None):
+    cards = "".join(product_card(a, root) for a in items)
+    see_all = f'<a class="see-all" href="{see_all_href}">Ver todas →</a>' if see_all_href else ""
+    return f"""
+    <section class="section">
+      <div class="section-head"><h2>{title}</h2>{see_all}</div>
+      <div class="card-grid">{cards}</div>
+    </section>"""
+
+
 def build_index(articles):
-    cards = ""
-    for a in articles:
-        cards += f"""
-        <a class="card" href="articulos/{a['slug']}.html" style="text-decoration:none;color:inherit;">
-          <img src="{a['image_url']}" alt="{a['title']}" loading="lazy">
-          <h3>{a['title']}</h3>
-          <div class="price-box">
-            <span class="price-old">{a['old_price']:.2f}€</span>
-            <span class="price-new">{a['price']:.2f}€</span>
-            <span class="discount">-{a['discount_pct']}%</span>
-          </div>
-        </a>"""
-    body = f"<h1>Ultimas ofertas</h1><div class='card-grid'>{cards}</div>"
-    return page_shell("Inicio", body, "Las mejores ofertas y chollos de tecnologia seleccionados cada dia.", root="")
+    ofertas_dia = sorted(articles, key=lambda a: -a["discount_pct"])[:8]
+    mas_demandados = [a for a in articles if a["featured"]][:8]
+
+    body = f"""
+    <div class="section" style="margin-top:0;">
+      <p style="color:var(--ink-muted); max-width:60ch;">Reunimos en un solo sitio las mejores ofertas de Amazon
+      seleccionadas cada dia: tecnologia, hogar, deporte, moda, bebe y mascotas. Usa el buscador de arriba o
+      explora por categoria.</p>
+    </div>
+    {section_html("🔥 Ofertas del dia", ofertas_dia, root="")}
+    {section_html("⭐ Los mas demandados", mas_demandados, root="")}
+    """
+    for slug in CATEGORY_ORDER:
+        items = [a for a in articles if a["category"] == slug][:4]
+        if items:
+            body += section_html(CATEGORY_LABELS[slug], items, root="", see_all_href=f"categorias/{slug}.html")
+
+    return page_shell("Inicio", body, "Las mejores ofertas de Amazon en tecnologia, hogar, deporte, moda, bebe y mascotas, seleccionadas cada dia.", root="")
 
 
-def build_article(a):
-    body = f"<h1>{a['title']}</h1><p><em>Publicado el {a['published']}</em></p>{a['body_html']}"
-    return page_shell(a["title"], body, a["meta_description"], root="../")
+def build_category_page(slug, items):
+    label = CATEGORY_LABELS[slug]
+    breadcrumb = f'<div class="breadcrumb"><a href="../index.html">Inicio</a> / {label}</div>'
+    cards = "".join(product_card(a, root="../") for a in items)
+    body = f"""
+    {breadcrumb}
+    <h1>{label}: todas las ofertas</h1>
+    <div class="card-grid">{cards}</div>
+    """
+    return page_shell(label, body, f"Todas las ofertas de {label} seleccionadas cada dia.", root="../", active_category=slug)
+
+
+def build_article(a, all_articles):
+    label = a["category_label"]
+    breadcrumb = (
+        f'<div class="breadcrumb"><a href="../index.html">Inicio</a> / '
+        f'<a href="../categorias/{a["category"]}.html">{label}</a> / {a["name"]}</div>'
+    )
+    related = [x for x in all_articles if x["category"] == a["category"] and x["slug"] != a["slug"]][:4]
+    related_html = f'<div class="related-grid">{section_html("Tambien te puede interesar", related, root="../")}</div>' if related else ""
+
+    body = f"""
+    {breadcrumb}
+    <div class="article-head">
+      <h1>{a['title']}</h1>
+      <div class="article-meta">Publicado el {a['published']} · {label} · ⭐ {a['rating']}/5</div>
+    </div>
+    <div class="article-body">{a['body_html']}</div>
+    {related_html}
+    """
+    return page_shell(a["title"], body, a["meta_description"], root="../", active_category=a["category"])
 
 
 LEGAL_PAGES = {
@@ -126,7 +340,8 @@ comisiones por publicidad, publicitando e incluyendo enlaces a Amazon.es.</p>
 <h1>Politica de privacidad</h1>
 <p><strong>[PLACEHOLDER: revisa y completa antes de publicar]</strong></p>
 <p>Este sitio no recopila datos personales mas alla de los estrictamente necesarios
-para su funcionamiento tecnico. Si en el futuro se anaden formularios, analitica o
+para su funcionamiento tecnico (el buscador funciona en tu navegador, sin enviar tus
+busquedas a ningun servidor). Si en el futuro se anaden formularios, analitica o
 publicidad personalizada, esta politica debera actualizarse en consecuencia y,
 si corresponde, solicitarse consentimiento explicito conforme al RGPD.</p>
 """,
@@ -145,25 +360,48 @@ def build(articles):
         shutil.rmtree(OUT_DIR)
     os.makedirs(os.path.join(OUT_DIR, "static"))
     os.makedirs(os.path.join(OUT_DIR, "articulos"))
+    os.makedirs(os.path.join(OUT_DIR, "categorias"))
     os.makedirs(os.path.join(OUT_DIR, "legal"))
 
     with open(os.path.join(OUT_DIR, "static", "style.css"), "w", encoding="utf-8") as f:
         f.write(BASE_CSS)
     with open(os.path.join(OUT_DIR, "static", "cookie-consent.js"), "w", encoding="utf-8") as f:
         f.write(COOKIE_JS)
+    with open(os.path.join(OUT_DIR, "static", "search.js"), "w", encoding="utf-8") as f:
+        f.write(SEARCH_JS)
 
     with open(os.path.join(OUT_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(build_index(articles))
 
+    for slug in CATEGORY_ORDER:
+        items = [a for a in articles if a["category"] == slug]
+        if not items:
+            continue
+        with open(os.path.join(OUT_DIR, "categorias", f"{slug}.html"), "w", encoding="utf-8") as f:
+            f.write(build_category_page(slug, items))
+
     for a in articles:
         with open(os.path.join(OUT_DIR, "articulos", f"{a['slug']}.html"), "w", encoding="utf-8") as f:
-            f.write(build_article(a))
+            f.write(build_article(a, articles))
 
     for name, content in LEGAL_PAGES.items():
         with open(os.path.join(OUT_DIR, "legal", name), "w", encoding="utf-8") as f:
             f.write(page_shell(name.replace(".html", "").replace("-", " ").title(), content, root="../"))
 
+    products_index = [
+        {
+            "slug": a["slug"], "name": a["name"], "category": a["category"],
+            "category_label": a["category_label"], "price": a["price"],
+            "old_price": a["old_price"], "discount_pct": a["discount_pct"],
+            "image_url": a["image_url"],
+        }
+        for a in articles
+    ]
+    with open(os.path.join(OUT_DIR, "products.json"), "w", encoding="utf-8") as f:
+        json.dump(products_index, f, ensure_ascii=False)
+
     urls = [SITE_URL + "/"] + [f"{SITE_URL}/articulos/{a['slug']}.html" for a in articles]
+    urls += [f"{SITE_URL}/categorias/{slug}.html" for slug in CATEGORY_ORDER]
     sitemap = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>"
     sitemap += "".join(f"<url><loc>{u}</loc></url>" for u in urls)
     sitemap += "</urlset>"
@@ -176,7 +414,7 @@ def build(articles):
     with open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as f:
         f.write("")
 
-    print(f"Sitio generado en {OUT_DIR} con {len(articles)} articulos.")
+    print(f"Sitio generado en {OUT_DIR} con {len(articles)} articulos en {len(CATEGORY_ORDER)} categorias.")
 
 
 if __name__ == "__main__":

@@ -8,7 +8,19 @@
 <link rel="stylesheet" href="../static/style.css">
 </head>
 <body>
-<header><a href="../index.html">ChollosTech</a></header>
+<script>window.SITE_ROOT = "../";</script>
+
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="logo" href="../index.html">Chollos<span>Tech</span></a>
+    <div class="search-wrap">
+      <input id="site-search" class="search-input" type="text" placeholder="Busca un producto o categoria (ej. auriculares, yoga...)" autocomplete="off">
+      <div id="search-results" class="search-results"></div>
+    </div>
+  </div>
+</header>
+
+<nav class="cat-nav"><div class="cat-nav-inner"><a class="cat-pill active" href="../index.html">Inicio</a><a class="cat-pill" href="../categorias/tecnologia.html">Tecnología</a><a class="cat-pill" href="../categorias/hogar-limpieza.html">Hogar y Limpieza</a><a class="cat-pill" href="../categorias/deportes.html">Deportes</a><a class="cat-pill" href="../categorias/moda-belleza.html">Moda y Belleza</a><a class="cat-pill" href="../categorias/bebe-ninos.html">Bebé y Niños</a><a class="cat-pill" href="../categorias/mascotas.html">Mascotas</a></div></nav>
 <main>
 
 <h1>Aviso legal</h1>
@@ -35,5 +47,6 @@ comisiones por publicidad, publicitando e incluyendo enlaces a Amazon.es.</p>
 </div>
 
 <script src="../static/cookie-consent.js"></script>
+<script src="../static/search.js"></script>
 </body>
 </html>
