@@ -30,6 +30,10 @@ SITE_NAME = "ChollosTech"
 # Cambia esto si compras un dominio propio y lo apuntas a GitHub Pages.
 SITE_URL = "https://danielbarriogalindos-debug.github.io/chollos-afiliados"
 
+# Archivo de verificacion de Google Search Console (metodo "Archivo HTML").
+# Se regenera en cada build para que sobreviva al borrado de /docs.
+GOOGLE_SITE_VERIFICATION_FILE = "google14138022b28dc005.html"
+
 CATEGORY_ORDER = ["tecnologia", "hogar-limpieza", "deportes", "moda-belleza", "bebe-ninos", "mascotas"]
 
 BASE_CSS = """
@@ -616,6 +620,10 @@ def build(articles):
 
     with open(os.path.join(OUT_DIR, ".nojekyll"), "w", encoding="utf-8") as f:
         f.write("")
+
+    if GOOGLE_SITE_VERIFICATION_FILE:
+        with open(os.path.join(OUT_DIR, GOOGLE_SITE_VERIFICATION_FILE), "w", encoding="utf-8") as f:
+            f.write(f"google-site-verification: {GOOGLE_SITE_VERIFICATION_FILE}\n")
 
     print(f"Sitio generado en {OUT_DIR} con {len(articles)} articulos en {len(CATEGORY_ORDER)} categorias.")
 
