@@ -14,8 +14,16 @@ Estructura del sitio generado:
 import json
 import os
 import shutil
+from datetime import date
+from html import escape
 
 from generate_content import CATEGORY_LABELS
+
+BUILD_DATE = date.today().isoformat()
+
+
+def jsonld(data):
+    return f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>'
 
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "docs")
 SITE_NAME = "ChollosTech"
@@ -275,21 +283,42 @@ def header_html(root):
 """
 
 
-def page_shell(title, body, description="", root="", active_category=None):
+def page_shell(title, body, description="", root="", active_category=None,
+                canonical_path="", og_image=None, structured_data=""):
     """
     root = prefijo relativo hacia la carpeta docs/. "" si la pagina esta en la
     raiz (index.html), "../" si esta un nivel mas abajo (articulos/, categorias/, legal/).
     Rutas relativas porque GitHub Pages sirve este sitio bajo una subcarpeta
     (/chollos-afiliados/), no en la raiz del dominio.
+
+    canonical_path = ruta desde la raiz del sitio (ej. "articulos/foo.html")
+    usada para <link rel="canonical">, Open Graph y datos estructurados.
     """
+    full_title = escape(f"{title} | {SITE_NAME}")
+    desc = escape(description)
+    canonical_url = f"{SITE_URL}/{canonical_path}"
+    og_image_tag = f'<meta property="og:image" content="{og_image}">\n<meta name="twitter:image" content="{og_image}">' if og_image else ""
+    og_type = "product" if canonical_path.startswith("articulos/") else "website"
+
     return f"""<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{title} | {SITE_NAME}</title>
-<meta name="description" content="{description}">
+<title>{full_title}</title>
+<meta name="description" content="{desc}">
+<link rel="canonical" href="{canonical_url}">
+<meta property="og:type" content="{og_type}">
+<meta property="og:site_name" content="{SITE_NAME}">
+<meta property="og:title" content="{full_title}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{canonical_url}">
+<meta name="twitter:card" content="{'summary_large_image' if og_image else 'summary'}">
+<meta name="twitter:title" content="{full_title}">
+<meta name="twitter:description" content="{desc}">
+{og_image_tag}
 <link rel="stylesheet" href="{root}static/style.css">
+{structured_data}
 </head>
 <body>
 <script>window.SITE_ROOT = "{root}";</script>
@@ -382,7 +411,29 @@ def build_index(articles):
         if items:
             body += section_html(CATEGORY_LABELS[slug], items, root="", see_all_href=f"categorias/{slug}.html")
 
-    return page_shell("Inicio", body, "Las mejores ofertas de Amazon en tecnologia, hogar, deporte, moda, bebe y mascotas, seleccionadas cada dia.", root="")
+    website_schema = jsonld({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": SITE_NAME,
+        "url": SITE_URL + "/",
+    })
+    return page_shell(
+        "Inicio", body,
+        "Las mejores ofertas de Amazon en tecnologia, hogar, deporte, moda, bebe y mascotas, seleccionadas cada dia.",
+        root="", canonical_path="", structured_data=website_schema,
+    )
+
+
+def breadcrumb_schema(items):
+    """items = lista de (nombre, url_absoluta)"""
+    return jsonld({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": i + 1, "name": name, "item": url}
+            for i, (name, url) in enumerate(items)
+        ],
+    })
 
 
 def build_category_page(slug, items):
@@ -396,7 +447,12 @@ def build_category_page(slug, items):
     <div class="card-grid">{cards}</div>
     {load_more_html()}
     """
-    return page_shell(label, body, f"Todas las ofertas de {label} seleccionadas cada dia.", root="../", active_category=slug)
+    schema = breadcrumb_schema([("Inicio", SITE_URL + "/"), (label, f"{SITE_URL}/categorias/{slug}.html")])
+    return page_shell(
+        label, body, f"Todas las ofertas de {label} seleccionadas cada dia.",
+        root="../", active_category=slug, canonical_path=f"categorias/{slug}.html",
+        structured_data=schema,
+    )
 
 
 def build_all_offers_page(articles):
@@ -410,7 +466,11 @@ def build_all_offers_page(articles):
     <div class="card-grid">{cards}</div>
     {load_more_html()}
     """
-    return page_shell("Todas las ofertas", body, "Todas las ofertas de Amazon en un solo listado, filtrable por descuento.", root="", active_category="ofertas")
+    schema = breadcrumb_schema([("Inicio", SITE_URL + "/"), ("Todas las ofertas", f"{SITE_URL}/ofertas.html")])
+    return page_shell(
+        "Todas las ofertas", body, "Todas las ofertas de Amazon en un solo listado, filtrable por descuento.",
+        root="", active_category="ofertas", canonical_path="ofertas.html", structured_data=schema,
+    )
 
 
 def build_article(a, all_articles):
@@ -431,7 +491,32 @@ def build_article(a, all_articles):
     <div class="article-body">{a['body_html']}</div>
     {related_html}
     """
-    return page_shell(a["title"], body, a["meta_description"], root="../", active_category=a["category"])
+    canonical_path = f"articulos/{a['slug']}.html"
+    schema_parts = [
+        breadcrumb_schema([
+            ("Inicio", SITE_URL + "/"),
+            (label, f"{SITE_URL}/categorias/{a['category']}.html"),
+            (a["name"], f"{SITE_URL}/{canonical_path}"),
+        ]),
+        jsonld({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            "name": a["name"],
+            "image": a["image_url"],
+            "category": label,
+            "offers": {
+                "@type": "Offer",
+                "url": a["affiliate_link"],
+                "priceCurrency": "EUR",
+                "price": f"{a['price']:.2f}",
+                "availability": "https://schema.org/InStock",
+            },
+        }),
+    ]
+    return page_shell(
+        a["title"], body, a["meta_description"], root="../", active_category=a["category"],
+        canonical_path=canonical_path, og_image=a["image_url"], structured_data="\n".join(schema_parts),
+    )
 
 
 LEGAL_PAGES = {
@@ -501,7 +586,10 @@ def build(articles):
 
     for name, content in LEGAL_PAGES.items():
         with open(os.path.join(OUT_DIR, "legal", name), "w", encoding="utf-8") as f:
-            f.write(page_shell(name.replace(".html", "").replace("-", " ").title(), content, root="../"))
+            f.write(page_shell(
+                name.replace(".html", "").replace("-", " ").title(), content, root="../",
+                canonical_path=f"legal/{name}",
+            ))
 
     products_index = [
         {
@@ -516,9 +604,9 @@ def build(articles):
         json.dump(products_index, f, ensure_ascii=False)
 
     urls = [SITE_URL + "/", f"{SITE_URL}/ofertas.html"] + [f"{SITE_URL}/articulos/{a['slug']}.html" for a in articles]
-    urls += [f"{SITE_URL}/categorias/{slug}.html" for slug in CATEGORY_ORDER]
+    urls += [f"{SITE_URL}/categorias/{slug}.html" for slug in CATEGORY_ORDER if any(a["category"] == slug for a in articles)]
     sitemap = "<?xml version='1.0' encoding='UTF-8'?><urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>"
-    sitemap += "".join(f"<url><loc>{u}</loc></url>" for u in urls)
+    sitemap += "".join(f"<url><loc>{u}</loc><lastmod>{BUILD_DATE}</lastmod></url>" for u in urls)
     sitemap += "</urlset>"
     with open(os.path.join(OUT_DIR, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(sitemap)
