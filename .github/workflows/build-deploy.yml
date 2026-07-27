@@ -24,10 +24,16 @@ jobs:
       - name: Ejecutar pipeline de contenido
         run: python scripts/run_pipeline.py
 
+      - name: Publicar productos nuevos en Telegram
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/post_telegram.py
+
       - name: Publicar cambios generados
         run: |
           git config user.name "chollos-bot"
           git config user.email "chollos-bot@users.noreply.github.com"
-          git add docs
+          git add docs data/telegram_posted.txt
           git diff --cached --quiet || git commit -m "Actualizacion automatica del sitio"
           git push

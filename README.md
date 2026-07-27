@@ -76,6 +76,30 @@ GitHub Actions regenerara el sitio automaticamente en la siguiente ejecucion
 programada, o puedes lanzarlo a mano desde la pestaña "Actions" del repo
 ("Run workflow").
 
+## Publicacion automatica en Telegram (opcional, gratis)
+
+`scripts/post_telegram.py` publica automaticamente cada producto NUEVO (no
+repetido) en tu canal de Telegram, con foto, precio, descuento y enlace de
+afiliado. Se ejecuta solo, dentro del mismo workflow diario de GitHub Actions.
+
+Para activarlo:
+
+1. Crea un canal de Telegram (publico, con un `@usuario`).
+2. En Telegram, habla con **@BotFather** → `/newbot` → sigue los pasos → te da
+   un token tipo `123456:ABC-...`.
+3. Añade el bot como **administrador** de tu canal (para que pueda publicar).
+4. En el repo de GitHub: Settings → Secrets and variables → Actions → **"New
+   repository secret"**, y crea dos secretos:
+   - `TELEGRAM_BOT_TOKEN` = el token que te dio BotFather
+   - `TELEGRAM_CHAT_ID` = el `@usuario` publico de tu canal (ej. `@chollostech`)
+
+**Importante:** el token del bot va SOLO en los secretos de GitHub, nunca en un
+archivo del repo ni compartido por chat — quien tenga ese token puede publicar
+en tu canal en tu nombre.
+
+Sin esos dos secretos configurados, este paso simplemente no hace nada (no
+rompe el resto del pipeline).
+
 ## Mejorar la calidad del texto (opcional, tiene un coste minimo)
 
 Por defecto el texto se genera con plantillas, gratis. Si quieres texto mas
