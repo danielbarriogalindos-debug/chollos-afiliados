@@ -24,6 +24,7 @@ CATEGORY_LABELS = {
     "moda-belleza": "Moda y Belleza",
     "bebe-ninos": "Bebé y Niños",
     "mascotas": "Mascotas",
+    "astronomia": "Astronomía",
 }
 
 CATEGORY_PROS = {
@@ -33,6 +34,11 @@ CATEGORY_PROS = {
     "moda-belleza": ["Buenos resultados para el precio", "Comodo de usar a diario", "Buena relacion calidad-precio"],
     "bebe-ninos": ["Pensado para el uso diario con niños", "Materiales seguros y faciles de limpiar", "Buena relacion calidad-precio"],
     "mascotas": ["Facil de limpiar y mantener", "Comodo para el animal", "Buena relacion calidad-precio"],
+    "astronomia": [
+        "Certificadas CE y EN ISO 12312-2, la norma obligatoria para mirar al Sol",
+        "Bloquean la radiacion ultravioleta e infrarroja, no solo la luz visible",
+        "Ligeras y economicas, faciles de compartir entre varias personas",
+    ],
 }
 CATEGORY_CONS = {
     "tecnologia": ["El software de configuracion es mejorable", "Los cables incluidos son cortos"],
@@ -41,6 +47,10 @@ CATEGORY_CONS = {
     "moda-belleza": ["Los colores disponibles son limitados", "El cable de alimentacion es algo corto"],
     "bebe-ninos": ["El manual viene solo en varios idiomas genericos", "El montaje inicial lleva unos minutos"],
     "mascotas": ["No apto para mascotas muy grandes", "Requiere limpieza periodica para mejor rendimiento"],
+    "astronomia": [
+        "Solo valen para mirar a simple vista: NUNCA las uses con telescopio, prismaticos o camara",
+        "Hay que revisarlas antes de cada uso y descartarlas si tienen aranazos, agujeros o el filtro despegado",
+    ],
 }
 
 DISCLOSURE = (

@@ -34,7 +34,9 @@ SITE_URL = "https://danielbarriogalindos-debug.github.io/chollos-afiliados"
 # Se regenera en cada build para que sobreviva al borrado de /docs.
 GOOGLE_SITE_VERIFICATION_FILE = "google14138022b28dc005.html"
 
-CATEGORY_ORDER = ["tecnologia", "hogar-limpieza", "deportes", "moda-belleza", "bebe-ninos", "mascotas"]
+# Astronomia va primera mientras dure el tiron del eclipse del 12/08/2026.
+# Este orden manda en el menu de categorias y en las secciones de la portada.
+CATEGORY_ORDER = ["astronomia", "tecnologia", "hogar-limpieza", "deportes", "moda-belleza", "bebe-ninos", "mascotas"]
 
 BASE_CSS = """
 :root {

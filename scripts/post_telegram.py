@@ -9,6 +9,12 @@ Configuracion necesaria (variables de entorno, NUNCA hardcodeadas aqui):
   TELEGRAM_BOT_TOKEN  -> token que te da @BotFather al crear el bot
   TELEGRAM_CHAT_ID    -> usuario publico del canal, ej. "@chollostech"
 
+Configuracion opcional:
+  TELEGRAM_MAX_POR_DIA -> cuantas ofertas publicar como maximo en cada
+                          ejecucion (por defecto 4). Publicar demasiado
+                          es la causa principal de que la gente silencie
+                          el canal y se vaya.
+
 Si las variables de entorno no estan definidas, el script no hace nada
 y no falla el pipeline (para que funcione igual en local sin Telegram).
 """
@@ -21,6 +27,39 @@ import urllib.request
 from generate_content import generate
 
 POSTED_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "telegram_posted.txt")
+
+DEFAULT_MAX_POR_DIA = 4
+
+# Hashtag por categoria, para que cada suscriptor pueda filtrar o buscar
+# solo lo que le interesa dentro del canal. Sin acentos ni enes: asi son
+# mas faciles de buscar desde el buscador de Telegram.
+CATEGORY_HASHTAGS = {
+    "tecnologia": "#tecnologia",
+    "hogar-limpieza": "#hogar",
+    "deportes": "#deporte",
+    "moda-belleza": "#belleza",
+    "bebe-ninos": "#bebe",
+    "mascotas": "#mascotas",
+    "astronomia": "#eclipse",
+}
+
+
+def max_por_dia():
+    try:
+        valor = int(os.environ.get("TELEGRAM_MAX_POR_DIA", DEFAULT_MAX_POR_DIA))
+    except ValueError:
+        return DEFAULT_MAX_POR_DIA
+    return valor if valor > 0 else DEFAULT_MAX_POR_DIA
+
+
+def build_hashtags(a):
+    tags = ["#chollos"]
+    categoria = CATEGORY_HASHTAGS.get(a["category"])
+    if categoria:
+        tags.append(categoria)
+    if a["discount_pct"] >= 35:
+        tags.append("#chollazo")
+    return " ".join(tags)
 
 
 def load_posted():
@@ -42,7 +81,8 @@ def build_caption(a):
         f"💶 Precio normal: <s>{a['old_price']:.2f}€</s>\n"
         f"✅ Oferta: <b>{a['price']:.2f}€</b>  ✨ Ahorras {savings:.2f}€\n"
         f"⭐ {a['rating']}/5 · {a['category_label']}\n\n"
-        f'🛒 <a href="{a["affiliate_link"]}">Cómpralo aquí</a>'
+        f'🛒 <a href="{a["affiliate_link"]}">Cómpralo aquí</a>\n\n'
+        f"{build_hashtags(a)}"
     )
 
 
@@ -74,6 +114,17 @@ def main():
     if not new_articles:
         print("No hay productos nuevos que publicar en Telegram.")
         return
+
+    # Primero los de mayor descuento: si hay mas ofertas nuevas que el
+    # limite diario, salen antes las mejores y el resto quedan para
+    # los dias siguientes (no se pierden, siguen sin estar en posted).
+    new_articles.sort(key=lambda a: a["discount_pct"], reverse=True)
+    limite = max_por_dia()
+    pendientes = len(new_articles)
+    new_articles = new_articles[:limite]
+
+    if pendientes > limite:
+        print(f"{pendientes} ofertas nuevas; publico las {limite} de mayor descuento.")
 
     for a in new_articles:
         caption = build_caption(a)
