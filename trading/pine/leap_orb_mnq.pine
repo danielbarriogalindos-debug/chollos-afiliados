@@ -30,7 +30,11 @@ strategy("Leap ORB - MNQ", overlay = true, calc_on_every_tick = false,
 // --- Sesiones -----------------------------------------------------------------
 grpS = "Sesiones (hora de Nueva York)"
 tz            = "America/New_York"
-orSession     = input.session("0930-0945", "Rango de apertura",        group = grpS)
+// Rango de 30 min por defecto, no de 15. No es porque gane mas: es que un stop
+// de ~0,30% (rango de 15 min) topa el riesgo en el 13,7% por el limite de margen,
+// mientras que ~0,60% (rango de 30 min) permite llegar al 27%. Con solo 5 o 6
+// operaciones en todo el concurso, ese es el rango de riesgo que hace falta.
+orSession     = input.session("0930-1000", "Rango de apertura",        group = grpS)
 entrySession  = input.session("0945-1200", "Ventana de entradas",      group = grpS)
 flatSession   = input.session("1550-1600", "Cierre forzoso",           group = grpS)
 
@@ -74,6 +78,13 @@ marginPerCon  = input.float(2500.0, "Margen por contrato ($)", minval = 1.0,
                  group = grpR)
 maxDailyLoss  = input.float(0.0, "Parada por perdida diaria (%, 0 = sin limite)",
                  minval = 0.0, group = grpR)
+
+grpQ = "Cualificacion"
+forceQualify  = input.bool(true, "Operar 1 contrato si el filtro rechaza el dia",
+                 tooltip = "El concurso exige un minimo de sesiones operadas. Un premio al " +
+                 "que no optas vale cero, por buena que sea la rentabilidad. Esta opcion " +
+                 "registra la sesion con una operacion simbolica cuando no hay setup valido.",
+                 group = grpQ)
 
 // =============================================================================
 // Estado
@@ -168,7 +179,13 @@ orRange      = orHigh - orLow
 rangeOk = orReady and not na(atrDaily) and atrDaily > 0 and orRange > 0 and
           orRange >= minOrAtr * atrDaily and orRange <= maxOrAtr * atrDaily
 
-canTrade = rangeOk and inEntry and not inFlat and not dayBlocked and
+// Operacion simbolica de cualificacion: el filtro rechaza aproximadamente la
+// mitad de las sesiones, asi que en 11 sesiones puedes quedarte por debajo de
+// las 5 exigidas. Un contrato registra la sesion a coste practicamente nulo.
+tokenTrade = forceQualify and orReady and not rangeOk and orRange > 0 and
+             not na(atrDaily) and atrDaily > 0
+
+canTrade = (rangeOk or tokenTrade) and inEntry and not inFlat and not dayBlocked and
            tradesDay < maxTrades and strategy.position_size == 0
 
 longStop  = stopMode == "ATR" ? longTrigger  - atrStopMult * atrDaily : orLow  - tickBuf
@@ -178,16 +195,16 @@ longRisk  = longTrigger  - longStop
 shortRisk = shortStop - shortTrigger
 
 if canTrade and longRisk > 0
-    int q = f_qty(longRisk)
+    int q = tokenTrade ? 1 : f_qty(longRisk)
     if q > 0
         strategy.entry("L", strategy.long, qty = q, stop = longTrigger,
-             comment = "ORB alza")
+             comment = tokenTrade ? "cualificacion" : "ORB alza")
 
 if canTrade and not longOnly and shortRisk > 0
-    int q = f_qty(shortRisk)
+    int q = tokenTrade ? 1 : f_qty(shortRisk)
     if q > 0
         strategy.entry("S", strategy.short, qty = q, stop = shortTrigger,
-             comment = "ORB baja")
+             comment = tokenTrade ? "cualificacion" : "ORB baja")
 
 // Cuenta la operacion cuando realmente se abre la posicion.
 if strategy.position_size != 0 and strategy.position_size[1] == 0

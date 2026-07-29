@@ -27,6 +27,34 @@ agosto     3  4  5  6  7      (lun-vie)
 agosto    10 11 12 13         (lun-jue)   ← 13 de agosto es el último día
 ```
 
+## 1bis. Lo primero: cualificar
+
+Con **0 operaciones hechas y 11 sesiones**, el requisito de operar un mínimo de
+5 sesiones deja de ser un trámite y pasa a ser la restricción que manda. El filtro
+de calidad del rango rechaza aproximadamente la mitad de las sesiones:
+
+| El filtro pasa… | Setups esperados en 11 sesiones | P(llegar a 5 sesiones) |
+|---|---|---|
+| 40% de los días | 4,4 | **46,7%** |
+| 50% de los días | 5,5 | 72,6% |
+| 60% de los días | 6,6 | 90,1% |
+
+Es decir: hay una posibilidad real de **quedarse sin optar a premio por no tener
+suficientes sesiones**, con independencia de lo bien que vaya la rentabilidad.
+
+```
+P(premio | cualificas)     ≈ 20-30%
+P(premio | no cualificas)  = 0%      ← no depende de tu rentabilidad
+```
+
+La solución es barata: los días en que el filtro rechaza el setup, **operar
+1 contrato** para registrar la sesión. El coste es de unos pocos dólares y elimina
+por completo el riesgo. Está implementado en `pine/leap_orb_mnq.pine` con la
+opción «Operar 1 contrato si el filtro rechaza el dia», activada por defecto.
+
+Conviene confirmar en las reglas del concurso que cualquier operación cuenta para
+el mínimo de sesiones; si exigiera volumen, habría que subir ese contrato mínimo.
+
 ## 2. Por qué esto no es "operar bien"
 
 En una cuenta real tu función objetivo es el crecimiento compuesto a largo plazo
@@ -199,6 +227,45 @@ Mi recomendación: **objetivo 2x**. Triplica la probabilidad de premio frente a
 apuntar al máximo, y es la única fila de la tabla cuyo escenario mediano no es
 una cuenta arrasada. El valor esperado es más bajo, pero está dominado por
 sucesos del 0,1% en los que no vas a poder confiar con 11 muestras.
+
+## 4bis. La restricción que ata el stop con el riesgo
+
+El riesgo por operación no es libre: **riesgo% = apalancamiento × stop%**, y el
+apalancamiento tiene el techo del margen. Con MNQ y margen intradía de 1.200 $
+(tope 45,6x, máximo 83 contratos):
+
+| Rango de apertura | Stop típico | Puntos | Riesgo máximo posible |
+|---|---|---|---|
+| 15 min | 0,30% | 82 | 13,7% |
+| **30 min** | **0,60%** | **164** | **27,3%** |
+| 60 min | 0,90% | 246 | 41,0% |
+
+Con un stop estrecho **no puedes** arriesgar lo que la teoría pide, aunque quieras:
+te lo impide el margen. Por eso el rango de apertura por defecto es de 30 minutos
+(09:30–10:00) y no de 15. No es que gane más por sí mismo; es que sin él el techo
+de riesgo cae a la mitad.
+
+## 4ter. Cuando solo quedan 5 o 6 operaciones
+
+Con pocas operaciones el modelo continuo deja de aplicar: el resultado lo decide
+**cuántas ganas**, no cuánto arriesgas. Con 5 operaciones y un sistema de 40% de
+acierto a +2R:
+
+| Riesgo/operación | Mediana | P(≥1,6x) | P(≥2x) | P(ruina) |
+|---|---|---|---|---|
+| 5% | 1,04x | 1,0% | 0,0% | 0,0% |
+| 10% | 1,05x | 8,7% | 1,0% | 0,0% |
+| 20% | 1,00x | 31,7% | 8,6% | 0,0% |
+| **30%** | 0,88x | 31,8% | **31,8%** | 7,8% |
+| 50% | 0,50x | 31,8% | 31,8% | 33,7% |
+
+Las probabilidades se estancan en escalones porque 31,8% es exactamente
+P(3 aciertos de 5). Pasar del 30% al 50% de riesgo **no mejora la probabilidad**:
+solo agranda el pago y multiplica la ruina. El punto óptimo es **20-30%**.
+
+Con esperanza cero (33,3% de acierto a +2R, lo que da un sistema sin ventaja
+real), el mismo cuadro da 21,0% de llegar a 2x al 30% de riesgo, con 13,2% de
+ruina. Ese es el escenario con el que conviene contar.
 
 ## 5. Plan de ejecución, sesión a sesión
 
