@@ -12,6 +12,7 @@ trading/
 └── sim/
     ├── contest_sim.py          Monte Carlo: probabilidad de acabar en premio
     ├── instrument_selector.py  Qué contrato de tu lista sirve, y cuál no
+    ├── order_ticket.py         La orden exacta a partir del rango de apertura
     ├── orb_backtest.py         Backtest ORB sobre CSV de TradingView
     └── tests/                  22 comprobaciones, incluidas las anti-sesgo
 ```
@@ -44,7 +45,16 @@ Cruza volatilidad (baja el `L*` necesario), tope por margen (techo duro) y
 granularidad (con 4 contratos no puedes afinar el tamaño). Descarta lo que no
 puede llevarte al objetivo por mucho que acierte la dirección.
 
-**3. ¿Funciona la estrategia sobre datos reales?**
+**3. ¿Cuál es mi orden de hoy?** (a las 10:00 ET, con el rango ya formado)
+
+```bash
+python3 sim/order_ticket.py --or-high 27450 --or-low 27290 --atr 550
+```
+
+Devuelve entrada, stop, objetivo, contratos y riesgo en dólares para las dos
+direcciones. El stop y el objetivo no se eligen: salen del rango de apertura.
+
+**4. ¿Funciona la estrategia sobre datos reales?**
 
 Exporta el histórico desde TradingView (gráfico de MNQ1! en 5 min → exportar
 datos) y pásalo al backtest:
@@ -57,7 +67,7 @@ python3 sim/orb_backtest.py --csv MNQ_5m.csv --grid     # barrido de parámetros
 No se descarga nada de internet (Yahoo Finance está bloqueado en muchos entornos,
 y el dato de TradingView del contrato real es mejor de todas formas).
 
-**4. Encadenar las dos cosas** — el backtest estima tu Sharpe y tu volatilidad
+**5. Encadenar las dos cosas** — el backtest estima tu Sharpe y tu volatilidad
 reales, y el Monte Carlo los usa en vez de los supuestos:
 
 ```bash
@@ -65,7 +75,7 @@ python3 sim/orb_backtest.py --csv MNQ_5m.csv --out trades.csv
 python3 sim/contest_sim.py --from-trades trades.csv --days 11
 ```
 
-**5. Validar sin datos** (comprueba que la maquinaria no hace trampas):
+**6. Validar sin datos** (comprueba que la maquinaria no hace trampas):
 
 ```bash
 python3 sim/orb_backtest.py --synthetic 300

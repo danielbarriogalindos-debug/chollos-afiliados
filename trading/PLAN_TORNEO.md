@@ -30,27 +30,35 @@ agosto    10 11 12 13         (lun-jue)   ← 13 de agosto es el último día
 ## 1bis. Lo primero: cualificar
 
 Con **0 operaciones hechas y 11 sesiones**, el requisito de operar un mínimo de
-5 sesiones deja de ser un trámite y pasa a ser la restricción que manda. El filtro
-de calidad del rango rechaza aproximadamente la mitad de las sesiones:
+5 sesiones hay que comprobarlo antes que nada, porque el filtro de calidad del
+rango rechaza sesiones y cada rechazo es una sesión que no cuenta. Tasa de
+aceptación medida según la longitud del rango de apertura:
 
-| El filtro pasa… | Setups esperados en 11 sesiones | P(llegar a 5 sesiones) |
-|---|---|---|
-| 40% de los días | 4,4 | **46,7%** |
-| 50% de los días | 5,5 | 72,6% |
-| 60% de los días | 6,6 | 90,1% |
+| Rango de apertura | Tasa de aceptación medida | Setups esperados | P(llegar a 5 sesiones) |
+|---|---|---|---|
+| 15 min | 67,9% | 7,5 | 96,9% |
+| **30 min** | **97,1%** | 10,7 | **~100%** |
+| 60 min | 96,0% | 10,6 | ~100% |
 
-Es decir: hay una posibilidad real de **quedarse sin optar a premio por no tener
-suficientes sesiones**, con independencia de lo bien que vaya la rentabilidad.
+*(Medido sobre 1.200 sesiones sintéticas. Es una cuestión de geometría del rango,
+no de ventaja, así que la medición se traslada a datos reales.)*
+
+Con el rango de 30 minutos la cualificación deja de ser un problema: casi todas
+las sesiones generan setup. Es un argumento adicional para los 30 minutos, además
+del del margen de la sección 4bis.
+
+Aun así conviene el cinturón y los tirantes, porque el coste es nulo y lo que está
+en juego no lo es:
 
 ```
 P(premio | cualificas)     ≈ 20-30%
 P(premio | no cualificas)  = 0%      ← no depende de tu rentabilidad
 ```
 
-La solución es barata: los días en que el filtro rechaza el setup, **operar
-1 contrato** para registrar la sesión. El coste es de unos pocos dólares y elimina
-por completo el riesgo. Está implementado en `pine/leap_orb_mnq.pine` con la
-opción «Operar 1 contrato si el filtro rechaza el dia», activada por defecto.
+Los días en que el filtro rechace el setup, **operar 1 contrato** para registrar
+la sesión: cuesta unos pocos dólares. Está implementado en
+`pine/leap_orb_mnq.pine` con la opción «Operar 1 contrato si el filtro rechaza el
+dia», activada por defecto.
 
 Conviene confirmar en las reglas del concurso que cualquier operación cuenta para
 el mínimo de sesiones; si exigiera volumen, habría que subir ese contrato mínimo.
