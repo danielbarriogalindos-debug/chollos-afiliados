@@ -117,15 +117,17 @@ Operar "bien" (1x) te da una probabilidad **numéricamente cero** de duplicar en
 
 | Objetivo | %/día compuesto | `L*` | Contratos MNQ | Riesgo/operación | Vol diaria de la cuenta |
 |---|---|---|---|---|---|
-| 1,50x | 3,75% | 21,6x | 43 | 6,5% | 27% |
-| 2,00x | 6,50% | 28,2x | 56 | 8,5% | 36% |
-| 3,00x | 10,50% | 35,5x | 71 | 10,6% | 45% |
-| 6,00x | 17,69% | 45,3x | 91 | 13,6% | 57% |
-| 11,0x | 24,36% | 52,4x | 105 | 15,7% | 66% |
+| 1,50x | 3,75% | 21,6x | 39 | 6,5% | 27% |
+| 2,00x | 6,50% | 28,2x | 52 | 8,5% | 36% |
+| 3,00x | 10,50% | 35,5x | 65 | 10,6% | 45% |
+| 6,00x | 17,69% | 45,3x | 83 | 13,6% | 57% |
+| 11,0x | 24,36% | 52,4x | 96 | 15,7% | 66% |
 
-*(MNQ a 25.000 = 50.000 $ de nocional por contrato; stop medio del 0,30%.)*
+*(MNQ con NQ en 27.342 = 54.684 $ de nocional por contrato; stop medio del 0,30%;
+σ=20%. Con la volatilidad elevada del régimen actual (~25%) el `L*` necesario baja
+en torno a un 20%: usa `sim/instrument_selector.py` para el número del día.)*
 
-Traducción: apuntar a duplicar significa **56 contratos de MNQ y arriesgar 8.500 $
+Traducción: apuntar a duplicar significa **52 contratos de MNQ y arriesgar 8.500 $
 por operación**, con oscilaciones diarias de la cuenta del 36%. Si eso te parece
 demencial, es porque lo es —para dinero real. Para un torneo es simplemente el
 precio del billete.
@@ -138,21 +140,24 @@ apalancamiento es `n/m`, independiente del tamaño de la cuenta**.
 
 | Instrumento | Nocional/contrato | Margen | Tope | `L*` para 2x | ¿Alcanzable? |
 |---|---|---|---|---|---|
-| MNQ, margen overnight 2.500 $ | 50.000 $ | 2.500 $ | 20x | 28,2x | **No** |
-| MNQ, margen intradía 1.200 $ | 50.000 $ | 1.200 $ | 41,7x | 28,2x | Sí |
-| MNQ, margen intradía 500 $ | 50.000 $ | 500 $ | 100x | 28,2x | Sí |
-| MBT (micro bitcoin) | 11.000 $ | ~4.000 $ | 2,8x | 8,1x | **No** |
+| MNQ, margen overnight 2.500 $ | 54.684 $ | 2.500 $ | 21,9x | 28,2x | **No** |
+| MNQ, margen intradía 1.200 $ | 54.684 $ | 1.200 $ | 45,6x | 28,2x | Sí |
+| MNQ, margen intradía 500 $ | 54.684 $ | 500 $ | 109x | 28,2x | Sí |
+| MBT (micro bitcoin, σ 55%) | 6.390 $ | ~2.400 $ | 2,7x | 10,2x | **No** |
 
 Dos conclusiones que no se ven a ojo:
 
-- **Micro cripto es peor, no mejor.** La volatilidad alta (70% anual) baja el
-  `L*` necesario de 28x a 8x, pero el margen de cripto es ~36% del nocional
-  frente al ~5% de MNQ, así que el tope se hunde a 2,8x. El hueco entre lo que
-  necesitas y lo que puedes se *ensancha*. Micro índices es la elección correcta.
+- **Micro cripto es peor, no mejor.** La volatilidad alta baja el `L*` necesario
+  de 28x a 10x, pero el margen de cripto es ~38% del nocional frente al ~2-5% de
+  MNQ, así que el tope se hunde a 2,7x. El hueco entre lo que necesitas y lo que
+  puedes se *ensancha*. Micro índices es la elección correcta.
 - **Lo primero que tienes que averiguar es el margen intradía de tu cuenta.**
   Es el único parámetro que decide si el óptimo está a tu alcance. Míralo en las
   especificaciones del contrato dentro de la cuenta del concurso y vuelve a
   correr el simulador con `--margin`.
+
+Para comparar toda tu lista de contratos de golpe, `sim/instrument_selector.py`
+hace este cálculo sobre cada símbolo disponible y ordena por holgura.
 
 ## 4. Qué dice el Monte Carlo
 

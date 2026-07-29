@@ -11,6 +11,7 @@ trading/
 │   └── leap_risk_panel.pine    Panel: cuánto arriesgar hoy según tu posición
 └── sim/
     ├── contest_sim.py          Monte Carlo: probabilidad de acabar en premio
+    ├── instrument_selector.py  Qué contrato de tu lista sirve, y cuál no
     ├── orb_backtest.py         Backtest ORB sobre CSV de TradingView
     └── tests/                  22 comprobaciones, incluidas las anti-sesgo
 ```
@@ -33,7 +34,17 @@ Ajusta `--margin` al margen intradía real de tu cuenta: es el parámetro que
 decide si el apalancamiento óptimo está a tu alcance. Los cortes de premio son
 suposiciones; corrígelos con `--cut` y `--prize` mirando la clasificación en vivo.
 
-**2. ¿Funciona la estrategia sobre datos reales?**
+**2. ¿Qué contrato debo operar?**
+
+```bash
+python3 sim/instrument_selector.py --equity 100000 --days 11 --target 2
+```
+
+Cruza volatilidad (baja el `L*` necesario), tope por margen (techo duro) y
+granularidad (con 4 contratos no puedes afinar el tamaño). Descarta lo que no
+puede llevarte al objetivo por mucho que acierte la dirección.
+
+**3. ¿Funciona la estrategia sobre datos reales?**
 
 Exporta el histórico desde TradingView (gráfico de MNQ1! en 5 min → exportar
 datos) y pásalo al backtest:
@@ -46,7 +57,7 @@ python3 sim/orb_backtest.py --csv MNQ_5m.csv --grid     # barrido de parámetros
 No se descarga nada de internet (Yahoo Finance está bloqueado en muchos entornos,
 y el dato de TradingView del contrato real es mejor de todas formas).
 
-**3. Encadenar las dos cosas** — el backtest estima tu Sharpe y tu volatilidad
+**4. Encadenar las dos cosas** — el backtest estima tu Sharpe y tu volatilidad
 reales, y el Monte Carlo los usa en vez de los supuestos:
 
 ```bash
@@ -54,7 +65,7 @@ python3 sim/orb_backtest.py --csv MNQ_5m.csv --out trades.csv
 python3 sim/contest_sim.py --from-trades trades.csv --days 11
 ```
 
-**4. Validar sin datos** (comprueba que la maquinaria no hace trampas):
+**5. Validar sin datos** (comprueba que la maquinaria no hace trampas):
 
 ```bash
 python3 sim/orb_backtest.py --synthetic 300
