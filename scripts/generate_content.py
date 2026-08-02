@@ -107,6 +107,7 @@ def generate_article(product, index):
     intro = INTROS[index % len(INTROS)].format(name=name)
 
     body_html = f"""
+    <img src="{product['image_url']}" alt="{name}">
     <p>{intro}</p>
     <p>{product['short_desc']}.</p>
     <div class="price-box">
