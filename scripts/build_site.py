@@ -38,6 +38,10 @@ GOOGLE_SITE_VERIFICATION_FILE = "google14138022b28dc005.html"
 # Este orden manda en el menu de categorias y en las secciones de la portada.
 CATEGORY_ORDER = ["astronomia", "tecnologia", "hogar-limpieza", "deportes", "moda-belleza", "bebe-ninos", "mascotas"]
 
+# Valoracion minima para que un producto salga destacado en la portada.
+# Debe coincidir con la de post_telegram.py.
+MIN_RATING = 3.5
+
 BASE_CSS = """
 :root {
   --bg: #f3f4f6;
@@ -420,9 +424,20 @@ def section_html(title, items, root, see_all_href=None):
     </section>"""
 
 
+def rating_de(a):
+    try:
+        return float(a["rating"])
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def build_index(articles):
-    ofertas_dia = sorted(articles, key=lambda a: -a["discount_pct"])[:8]
-    mas_demandados = [a for a in articles if a["featured"]][:8]
+    # En portada solo destacamos productos bien valorados. Los demas siguen
+    # accesibles desde su categoria, el buscador y "Todas las ofertas": no se
+    # ocultan, simplemente no se promocionan en el escaparate.
+    recomendables = [a for a in articles if rating_de(a) >= MIN_RATING]
+    ofertas_dia = sorted(recomendables, key=lambda a: -a["discount_pct"])[:8]
+    mas_demandados = [a for a in recomendables if a["featured"]][:8]
 
     body = f"""
     <div class="section" style="margin-top:0;">

@@ -30,6 +30,18 @@ POSTED_FILE = os.path.join(os.path.dirname(__file__), "..", "data", "telegram_po
 
 DEFAULT_MAX_POR_DIA = 4
 
+# No promocionamos productos mal valorados: una recomendacion mala de
+# entrada cuesta la credibilidad del canal entera. Siguen estando en la
+# web (en su categoria y en el buscador), solo que no se publican.
+MIN_RATING = 3.5
+
+
+def rating_de(a):
+    try:
+        return float(a["rating"])
+    except (TypeError, ValueError):
+        return 0.0
+
 # Hashtag por categoria, para que cada suscriptor pueda filtrar o buscar
 # solo lo que le interesa dentro del canal. Sin acentos ni enes: asi son
 # mas faciles de buscar desde el buscador de Telegram.
@@ -110,6 +122,11 @@ def main():
     posted = load_posted()
     articles = generate()
     new_articles = [a for a in articles if a["slug"] not in posted]
+
+    descartados = [a for a in new_articles if rating_de(a) < MIN_RATING]
+    if descartados:
+        print(f"Descartados por valoracion < {MIN_RATING}: " + ", ".join(a["slug"] for a in descartados))
+    new_articles = [a for a in new_articles if rating_de(a) >= MIN_RATING]
 
     if not new_articles:
         print("No hay productos nuevos que publicar en Telegram.")
