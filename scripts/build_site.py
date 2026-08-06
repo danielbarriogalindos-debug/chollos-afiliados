@@ -28,7 +28,7 @@ def jsonld(data):
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "docs")
 SITE_NAME = "ChollosTech"
 # Cambia esto si compras un dominio propio y lo apuntas a GitHub Pages.
-SITE_URL = "https://danielbarriogalindos-debug.github.io/chollos-afiliados"
+SITE_URL = "https://dbg-chollos.github.io/chollos-afiliados"
 
 # Archivo de verificacion de Google Search Console (metodo "Archivo HTML").
 # Se regenera en cada build para que sobreviva al borrado de /docs.
