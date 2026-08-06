@@ -131,6 +131,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 1.6rem 1rem 3rem; }
 
 footer { text-align: center; padding: 2rem 1rem; font-size: .85rem; color: var(--ink-muted); }
 footer a { color: var(--ink-muted); }
+footer p { max-width: 70ch; margin: 0 auto .7rem; font-size: .8rem; line-height: 1.5; }
+.afiliado-aviso { font-weight: 700; color: var(--ink); }
+.price-note { font-size: .8rem; color: var(--ink-muted); margin-top: -.4rem; }
 
 #cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--brand); color: white; padding: 1rem; display: none; z-index: 999; }
 #cookie-banner button { background: var(--accent); color: var(--accent-ink); border: none; padding: .5rem 1rem; border-radius: 6px; margin-left: 1rem; cursor: pointer; font-weight: bold; }
@@ -334,6 +337,11 @@ def page_shell(title, body, description="", root="", active_category=None,
 {body}
 </main>
 <footer>
+  <p class="afiliado-aviso">En calidad de Afiliado de Amazon, obtengo ingresos por las compras
+  adscritas que cumplen los requisitos aplicables.</p>
+  <p>Los precios y la disponibilidad mostrados son los vigentes en la fecha indicada en cada ficha
+  y pueden cambiar en cualquier momento. El precio que aplica es el que figura en Amazon al
+  completar la compra.</p>
   &copy; {SITE_NAME}. <a href="{root}legal/aviso-legal.html">Aviso legal</a> ·
   <a href="{root}legal/privacidad.html">Privacidad</a> ·
   <a href="{root}legal/cookies.html">Cookies</a>

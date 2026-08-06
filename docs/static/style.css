@@ -91,6 +91,9 @@ main { max-width: 1180px; margin: 0 auto; padding: 1.6rem 1rem 3rem; }
 
 footer { text-align: center; padding: 2rem 1rem; font-size: .85rem; color: var(--ink-muted); }
 footer a { color: var(--ink-muted); }
+footer p { max-width: 70ch; margin: 0 auto .7rem; font-size: .8rem; line-height: 1.5; }
+.afiliado-aviso { font-weight: 700; color: var(--ink); }
+.price-note { font-size: .8rem; color: var(--ink-muted); margin-top: -.4rem; }
 
 #cookie-banner { position: fixed; bottom: 0; left: 0; right: 0; background: var(--brand); color: white; padding: 1rem; display: none; z-index: 999; }
 #cookie-banner button { background: var(--accent); color: var(--accent-ink); border: none; padding: .5rem 1rem; border-radius: 6px; margin-left: 1rem; cursor: pointer; font-weight: bold; }

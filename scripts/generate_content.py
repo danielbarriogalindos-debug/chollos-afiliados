@@ -128,6 +128,8 @@ def generate_article(product, index):
     <p>{intro}</p>
     <p>{product['short_desc']}.</p>
     {price_box}
+    <p class="price-note">Precio y disponibilidad consultados el {date.today().strftime('%d/%m/%Y')}.
+    Pueden haber cambiado desde entonces: el precio valido es el que aparece en Amazon al comprar.</p>
     <h2>Puntos fuertes</h2>
     <ul>{''.join(f'<li>{p}</li>' for p in pros)}</ul>
     <h2>A tener en cuenta</h2>
