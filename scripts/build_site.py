@@ -346,6 +346,23 @@ def page_shell(title, body, description="", root="", active_category=None,
 </html>"""
 
 
+def price_box_html(a):
+    """
+    Los productos sin rebaja se muestran solo con su precio, sin tachado ni
+    etiqueta de descuento. Nunca inventamos un precio anterior para simular
+    una oferta que no existe: eso es publicidad enganosa.
+    """
+    if a["discount_pct"] <= 0:
+        return f'<div class="price-box"><span class="price-new">{a["price"]:.2f}€</span></div>'
+    return (
+        '<div class="price-box">'
+        f'<span class="price-old">{a["old_price"]:.2f}€</span>'
+        f'<span class="price-new">{a["price"]:.2f}€</span>'
+        f'<span class="discount">-{a["discount_pct"]}%</span>'
+        "</div>"
+    )
+
+
 def product_card(a, root):
     return f"""
     <a class="card" href="{root}articulos/{a['slug']}.html" data-discount="{a['discount_pct']}" data-price="{a['price']:.2f}">
@@ -353,11 +370,7 @@ def product_card(a, root):
       <div class="cat-tag">{a['category_label']}</div>
       <h3>{a['name']}</h3>
       <div class="rating">⭐ <b>{a['rating']}</b>/5</div>
-      <div class="price-box">
-        <span class="price-old">{a['old_price']:.2f}€</span>
-        <span class="price-new">{a['price']:.2f}€</span>
-        <span class="discount">-{a['discount_pct']}%</span>
-      </div>
+      {price_box_html(a)}
     </a>"""
 
 

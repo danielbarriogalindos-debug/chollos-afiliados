@@ -106,15 +106,28 @@ def generate_article(product, index):
     cons = CATEGORY_CONS.get(category, ["Sin pegas relevantes detectadas"])
     intro = INTROS[index % len(INTROS)].format(name=name)
 
+    # Sin rebaja no hay precio tachado ni etiqueta de descuento: mostrar un
+    # precio anterior inventado seria publicidad enganosa.
+    if discount_pct > 0:
+        price_box = (
+            '<div class="price-box">'
+            f'<span class="price-old">{old_price:.2f}€</span>'
+            f'<span class="price-new">{price:.2f}€</span>'
+            f'<span class="discount">-{discount_pct}%</span>'
+            "</div>"
+        )
+        titulo = f"{name}: oferta con {discount_pct}% de descuento"
+        meta = f"{name} rebajado a {price:.2f}€ ({discount_pct}% de descuento). Analizamos si merece la pena."
+    else:
+        price_box = f'<div class="price-box"><span class="price-new">{price:.2f}€</span></div>'
+        titulo = f"{name}: precio y analisis"
+        meta = f"{name} por {price:.2f}€. Analizamos si merece la pena."
+
     body_html = f"""
     <img src="{product['image_url']}" alt="{name}">
     <p>{intro}</p>
     <p>{product['short_desc']}.</p>
-    <div class="price-box">
-      <span class="price-old">{old_price:.2f}€</span>
-      <span class="price-new">{price:.2f}€</span>
-      <span class="discount">-{discount_pct}%</span>
-    </div>
+    {price_box}
     <h2>Puntos fuertes</h2>
     <ul>{''.join(f'<li>{p}</li>' for p in pros)}</ul>
     <h2>A tener en cuenta</h2>
@@ -127,8 +140,8 @@ def generate_article(product, index):
     return {
         "slug": product["slug"],
         "name": name,
-        "title": f"{name}: oferta con {discount_pct}% de descuento",
-        "meta_description": f"{name} rebajado a {price:.2f}€ ({discount_pct}% de descuento). Analizamos si merece la pena.",
+        "title": titulo,
+        "meta_description": meta,
         "category": category,
         "category_label": CATEGORY_LABELS.get(category, category.replace("-", " ").title()),
         "price": price,
