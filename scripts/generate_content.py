@@ -96,6 +96,34 @@ def enrich_with_claude(product, base_text):
         return base_text
 
 
+DIAS_PRECIO_FIABLE = 7
+
+
+def price_note(product):
+    """
+    Fecha REAL en que se comprobo el precio en Amazon, no la fecha de
+    generacion de la web: decir que un precio de hace dos semanas se ha
+    verificado hoy es enganar al lector (y al programa de afiliados).
+    """
+    fecha = (product.get("fecha_precio") or "").strip()
+    if not fecha:
+        return ("No hemos podido verificar cuando se comprobo este precio por ultima vez. "
+                "Consulta el precio actual en Amazon antes de comprar.")
+    try:
+        d = date.fromisoformat(fecha)
+    except ValueError:
+        return "Consulta el precio actual en Amazon antes de comprar."
+
+    dias = (date.today() - d).days
+    texto = f"Precio y disponibilidad comprobados en Amazon el {d.strftime('%d/%m/%Y')}"
+    if dias >= DIAS_PRECIO_FIABLE:
+        texto += (f" (hace {dias} dias). <b>Es probable que haya cambiado desde entonces.</b> "
+                  "Comprueba siempre el precio en Amazon antes de comprar.")
+    else:
+        texto += ". El precio valido es el que aparece en Amazon al completar la compra."
+    return texto
+
+
 def generate_article(product, index):
     name = product["name"]
     category = product["category"]
@@ -105,6 +133,7 @@ def generate_article(product, index):
     pros = CATEGORY_PROS.get(category, ["Buena relacion calidad-precio"])
     cons = CATEGORY_CONS.get(category, ["Sin pegas relevantes detectadas"])
     intro = INTROS[index % len(INTROS)].format(name=name)
+    nota_precio = price_note(product)
 
     # Sin rebaja no hay precio tachado ni etiqueta de descuento: mostrar un
     # precio anterior inventado seria publicidad enganosa.
@@ -128,8 +157,7 @@ def generate_article(product, index):
     <p>{intro}</p>
     <p>{product['short_desc']}.</p>
     {price_box}
-    <p class="price-note">Precio y disponibilidad consultados el {date.today().strftime('%d/%m/%Y')}.
-    Pueden haber cambiado desde entonces: el precio valido es el que aparece en Amazon al comprar.</p>
+    <p class="price-note">{nota_precio}</p>
     <h2>Puntos fuertes</h2>
     <ul>{''.join(f'<li>{p}</li>' for p in pros)}</ul>
     <h2>A tener en cuenta</h2>
